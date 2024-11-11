@@ -18,26 +18,14 @@ const UserMachineManagementPage = () => {
       sortable: true,
     },
     {
-      name: "Port Title",
+      name: "VM Title",
       selector: (row) => row.title,
       grow: 1,
       sortable: true,
     },
     {
-      name: "Listen Port",
-      selector: (row) => row.listen_port,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Target",
-      selector: (row) => row.target,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Target Port",
-      selector: (row) => row.target_port,
+      name: "VM Download URL",
+      selector: (row) => row.download_url,
       grow: 1,
       sortable: true,
     },
@@ -101,9 +89,8 @@ const UserMachineManagementPage = () => {
   }, []);
 
   const getData = () => {
-    axios.post(`${SERVER_URL}/userPort/getAll`).then((res) => {
+    axios.post(`${SERVER_URL}/uservm/getAll`).then((res) => {
       if (res.data.success) {
-        console.log(res.data.data);
         setData(res.data.data);
       } else {
         console.log("error");
@@ -112,7 +99,7 @@ const UserMachineManagementPage = () => {
   };
 
   const handleDelete = (id) => {
-    axios.post(`${SERVER_URL}/userPort/remove`, { id: id }).then((res) => {
+    axios.post(`${SERVER_URL}/uservm/remove`, { id: id }).then((res) => {
       if (res.data.success) {
         getData();
         toast.success("Item has been deleted successfully");
@@ -123,11 +110,11 @@ const UserMachineManagementPage = () => {
   };
 
   const handleCreate = () => {
-    router.push("/user_port/create");
+    router.push("/user_vm/create");
   };
 
   const handleGoDetail = (id) => {
-    router.push(`/user_port/${id}`);
+    router.push(`/user_vm/${id}`);
   };
 
   return (
@@ -137,7 +124,7 @@ const UserMachineManagementPage = () => {
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
-              <h1 className="mb-1 h2 fw-bold">User Port Management</h1>
+              <h1 className="mb-1 h2 fw-bold">User VM Management</h1>
             </div>
             <Button variant="primary" onClick={handleCreate}>
               Create

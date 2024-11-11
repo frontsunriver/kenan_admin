@@ -60,6 +60,12 @@ export const DashboardMenu = [
     icon: "layers",
     link: "/vm_images",
   },
+  {
+    id: uuid(),
+    title: "User VM Images",
+    icon: "command",
+    link: "/user_vm",
+  },
   // {
   //   id: uuid(),
   //   title: "Configurations",

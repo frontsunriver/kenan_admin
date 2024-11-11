@@ -80,7 +80,7 @@ const PortCreatePage = () => {
 
   return (
     <Container fluid className="p-6">
-      <PageHeading heading="Create User Machine" />
+      <PageHeading heading="Create Port" />
       <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
@@ -132,14 +132,14 @@ const PortCreatePage = () => {
                       className="col-sm-4 col-form-label
                     form-label"
                     >
-                      Target Ip
+                      Target
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Target Ip"
-                        id="targetIp"
+                        placeholder="Target"
+                        id="target"
                         required
                         onChange={(e) => setTargetIp(e.target.value)}
                       />

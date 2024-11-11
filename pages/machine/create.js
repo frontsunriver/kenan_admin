@@ -22,7 +22,7 @@ const MachineCreatePage = () => {
       if (res.data.success) {
         let users = [];
         res.data.data.map((user) => {
-          users.push({ value: user.id, label: user.name });
+          users.push({ value: user.id, label: user.email });
         });
         setUserOption(users);
       } else {

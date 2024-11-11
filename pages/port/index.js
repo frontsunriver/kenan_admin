@@ -24,7 +24,7 @@ const PortManagementPage = () => {
       sortable: true,
     },
     {
-      name: "Target IP",
+      name: "Target",
       selector: (row) => row.target,
       grow: 1,
       sortable: true,
@@ -96,8 +96,9 @@ const PortManagementPage = () => {
 
   const getData = () => {
     axios.post(`${SERVER_URL}/port/getAll`).then((res) => {
-      if (res.data.success) {
-        setData(res.data.data);
+      if (res.data.status == 200) {
+        console.log(res.data.data.data);
+        setData(res.data.data.data);
       } else {
         console.log("error");
       }

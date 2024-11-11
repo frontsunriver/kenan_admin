@@ -35,12 +35,14 @@ const PortDetailPage = () => {
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/port/findById`, { id: id }).then((res) => {
-        if (res.data.success) {
-          setTitle(res.data.data.title);
-          setListenPort(res.data.data.listen_port);
-          setTargetIp(res.data.data.target_ip);
-          setTargetPort(res.data.data.target_port);
-          setType(res.data.data.is_valid);
+        console.log(res.data);
+        if (res.data.status == 200) {
+          setTitle(res.data.data.data[0].title);
+          setListenPort(res.data.data.data[0].listen_port);
+          setTargetIp(res.data.data.data[0].target);
+          setTargetPort(res.data.data.data[0].target_port);
+          setType(res.data.data.data[0].is_valid);
+          setHttps(res.data.data.data[0].is_https);
         } else {
           // toast.error(res.data.message);
         }
@@ -58,7 +60,7 @@ const PortDetailPage = () => {
       return;
     }
     if (targetIp == "") {
-      toast.error("Please fill target ip!");
+      toast.error("Please fill target!");
       return;
     }
     if (targetPort == "") {
@@ -75,7 +77,7 @@ const PortDetailPage = () => {
         id: id,
         title: title,
         listen_port: listenPort,
-        target_ip: targetIp,
+        target: targetIp,
         target_port: targetPort,
         is_https: https,
         is_active: type,
@@ -157,13 +159,13 @@ const PortDetailPage = () => {
                       className="col-sm-4 col-form-label
                     form-label"
                     >
-                      Target Ip
+                      Target
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Target Ip"
+                        placeholder="Target"
                         id="target_ip"
                         value={targetIp}
                         required

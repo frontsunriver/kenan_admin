@@ -54,7 +54,7 @@ const UserCreatePage = () => {
 
   return (
     <Container fluid className="p-6">
-      <PageHeading heading="Create Users" />
+      <PageHeading heading="Create User" />
       <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>

@@ -62,6 +62,7 @@ const UserManagementPage = () => {
               onClick={() => {
                 handleGoDetail(row.id);
               }}
+              title="Edit"
             >
               <i className={`nav-icon fe fe-edit`}></i>
             </Button>
@@ -71,13 +72,34 @@ const UserManagementPage = () => {
               onClick={() => {
                 handleDelete(row.id);
               }}
+              title="Delete"
             >
               <i className={`nav-icon fe fe-trash`}></i>
+            </Button>
+            <Button
+              variant="primary"
+              className="me-1"
+              onClick={() => {
+                handleGoVm(row.id);
+              }}
+              title="VM Machine"
+            >
+              <i className={`nav-icon fe fe-airplay`}></i>
+            </Button>
+            <Button
+              variant="primary"
+              className="me-1"
+              onClick={() => {
+                handleGoPort(row.id);
+              }}
+              title="Port"
+            >
+              <i className={`nav-icon fe fe-shield`}></i>
             </Button>
           </div>
         );
       },
-      grow: 1,
+      grow: 2,
     },
   ];
 
@@ -122,6 +144,14 @@ const UserManagementPage = () => {
 
   const handleGoDetail = (id) => {
     router.push(`/user/${id}`);
+  };
+
+  const handleGoVm = (id) => {
+    router.push(`/user/vmmachine/${id}`);
+  };
+
+  const handleGoPort = (id) => {
+    router.push(`/user/port/${id}`);
   };
 
   return (

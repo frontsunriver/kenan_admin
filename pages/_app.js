@@ -15,7 +15,7 @@ import { AuthProvider } from "provider/AuthContext";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const pageURL = process.env.baseURL + router.pathname;
-  const title = "BCPlus Admin";
+  const title = "Kenan Admin";
   const description = "Kenan";
   const keywords = "Kenan";
 

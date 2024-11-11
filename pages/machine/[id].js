@@ -30,7 +30,7 @@ const UserDetailPage = () => {
       if (res.data.success) {
         let users = [];
         res.data.data.map((user) => {
-          users.push({ value: user.id, label: user.name });
+          users.push({ value: user.id, label: user.email });
         });
         setUserOptions(users);
       } else {
@@ -45,9 +45,9 @@ const UserDetailPage = () => {
         .post(`${SERVER_URL}/usermachine/findById`, { id: id })
         .then((res) => {
           if (res.data.success) {
-            setMachineId(res.data.data.machine_id);
-            setUserId(res.data.data.user_id);
-            setType(res.data.data.is_valid);
+            setMachineId(res.data.data[0].machine_id);
+            setUserId(res.data.data[0].user_id);
+            setType(res.data.data[0].is_valid);
           } else {
             // toast.error(res.data.message);
           }
@@ -97,7 +97,7 @@ const UserDetailPage = () => {
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
-      <PageHeading heading="Update VM Image" />
+      <PageHeading heading="Update User Machine" />
       <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
@@ -129,7 +129,7 @@ const UserDetailPage = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      User
                     </Form.Label>
                     <Col md={4} xs={4}>
                       <Form.Control

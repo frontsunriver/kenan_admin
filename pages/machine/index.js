@@ -18,8 +18,8 @@ const UserMachineManagementPage = () => {
       grow: 1,
     },
     {
-      name: "User Name",
-      selector: (row) => row.name,
+      name: "User Email",
+      selector: (row) => row.email,
       grow: 1,
       sortable: true,
     },

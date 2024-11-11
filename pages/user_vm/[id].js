@@ -12,9 +12,12 @@ import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const UserDetailPage = () => {
-  const [email, setEmail] = useState("");
+const UserPortDetail = () => {
+  const [vmId, setVMId] = useState("");
+  const [userId, setUserId] = useState("");
   const [type, setType] = useState("");
+  const [userOptions, setUserOptions] = useState([]);
+  const [portOptions, setPortOptions] = useState([]);
   const router = useRouter();
   const { id } = router.query;
 
@@ -24,10 +27,36 @@ const UserDetailPage = () => {
   ];
 
   useEffect(() => {
+    axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
+      if (res.data.success) {
+        let users = [];
+        res.data.data.map((user) => {
+          users.push({ value: user.id, label: user.email });
+        });
+        setUserOptions(users);
+      } else {
+        console.log("error");
+      }
+    });
+    axios.post(`${SERVER_URL}/vmimage/getAll`).then((res) => {
+      if (res.data.success) {
+        let ports = [];
+        res.data.data.map((image) => {
+          ports.push({ value: image.id, label: image.title });
+        });
+        setPortOptions(ports);
+      } else {
+        console.log("error");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     if (id !== undefined) {
-      axios.post(`${SERVER_URL}/user/findById`, { id: id }).then((res) => {
+      axios.post(`${SERVER_URL}/uservm/findById`, { id: id }).then((res) => {
         if (res.data.success) {
-          setEmail(res.data.data.email);
+          setVMId(res.data.data.port_map_id);
+          setUserId(res.data.data.user_id);
           setType(res.data.data.is_valid);
         } else {
           // toast.error(res.data.message);
@@ -37,8 +66,12 @@ const UserDetailPage = () => {
   }, [id]);
 
   const handleUpdate = async () => {
-    if (email == "") {
-      toast.error("Please fill email!");
+    if (vmId == "") {
+      toast.error("Please select port id!");
+      return;
+    }
+    if (userId == "") {
+      toast.error("Please select user id!");
       return;
     }
     if (type == "") {
@@ -47,15 +80,16 @@ const UserDetailPage = () => {
     }
 
     await axios
-      .post(`${SERVER_URL}/user/update`, {
+      .post(`${SERVER_URL}/uservm/update`, {
         id: id,
-        email: email,
+        vm_image_id: vmId,
+        user_id: userId,
         is_valid: type,
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("User has been updated successfully");
-          router.push("/user");
+          toast.success("Item has been updated successfully");
+          router.push("/user_vm");
         } else {
           console.log("error");
         }
@@ -66,10 +100,18 @@ const UserDetailPage = () => {
     setType(e.target.value);
   };
 
+  const handleUserChange = (e) => {
+    setUserId(e.target.value);
+  };
+
+  const handlePortChange = (e) => {
+    setVMId(e.target.value);
+  };
+
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
-      <PageHeading heading="Update user" />
+      <PageHeading heading="Update User VM" />
       <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
@@ -78,25 +120,40 @@ const UserDetailPage = () => {
             <Card.Body>
               <div>
                 <Form>
+                  {/* row */}
                   <Row className="mb-3">
-                    <label
-                      htmlFor="email"
-                      className="col-sm-4 col-form-label
-                    form-label"
-                    >
-                      Email
-                    </label>
-                    <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
-                        type="email"
-                        className="form-control"
-                        placeholder="Email"
-                        id="Email"
-                        value={email}
-                        required
-                        onChange={(e) => setEmail(e.target.value)}
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      User
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <Form.Control
+                        as={FormSelect}
+                        placeholder="Select Type"
+                        id="country"
+                        value={userId}
+                        options={userOptions}
+                        onChange={(e) => {
+                          handleUserChange(e);
+                        }}
                       />
-                    </div>
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      Port
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <Form.Control
+                        as={FormSelect}
+                        placeholder="Select Type"
+                        id="country"
+                        value={vmId}
+                        options={portOptions}
+                        onChange={(e) => {
+                          handlePortChange(e);
+                        }}
+                      />
+                    </Col>
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
@@ -136,4 +193,4 @@ const UserDetailPage = () => {
   );
 };
 
-export default UserDetailPage;
+export default UserPortDetail;
