@@ -7,8 +7,9 @@ import { useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomInput from "components/CustomInput";
+import CustomSelect from "components/CustomSelect";
 
 const VMImageCreatePage = () => {
   const router = useRouter();
@@ -18,39 +19,44 @@ const VMImageCreatePage = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
+  const { showToast } = useToast();
 
-  const countryOptions = [
+  const validOption = [
     { value: "1", label: "Enabled" },
     { value: "0", label: "Disabled" },
   ];
 
   const handleCreate = async () => {
     if (title == "") {
-      toast.error("Please fill title!");
+      showToast("Error", "Please fill title!", "failure");
       return;
     }
     if (password == "") {
-      toast.error("Please fill password!");
+      showToast("Error", "Please fill password!", "failure");
       return;
     }
     if (confirmPassword == "") {
-      toast.error("Please fill confirm password!");
+      showToast("Error", "Please fill confirm password!", "failure");
       return;
     }
     if (confirmPassword != password) {
-      toast.error("Password and confirm password should be same!");
+      showToast(
+        "Error",
+        "Password and confirm password should be same!",
+        "failure"
+      );
       return;
     }
     if (description == "") {
-      toast.error("Please fill description!");
+      showToast("Error", "Please fill description!", "failure");
       return;
     }
     if (downloadUrl == "") {
-      toast.error("Please fill download url!");
+      showToast("Error", "Please fill download url!", "failure");
       return;
     }
     if (type == "") {
-      toast.error("Please select status!");
+      showToast("Error", "Please select status!", "failure");
       return;
     }
 
@@ -64,22 +70,20 @@ const VMImageCreatePage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("Item has been created.");
-          router.push("/vm_images");
+          showToast("Success", "Item has been created.", "success");
         } else {
-          console.log("error");
+          showToast("Error", res.data.message, "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       <PageHeading heading="Create VM Image" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -90,18 +94,16 @@ const VMImageCreatePage = () => {
                   {/* row */}
                   <Row className="mb-3">
                     <label
-                      htmlFor="Title"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Title
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Title"
-                        id="Title"
                         required
                         onChange={(e) => setTitle(e.target.value)}
                       />
@@ -109,18 +111,16 @@ const VMImageCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="Password"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Password
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="password"
-                        className="form-control"
                         placeholder="Password"
-                        id="Password"
                         required
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -128,18 +128,16 @@ const VMImageCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="ConfirmPassword"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Confirm Password
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="password"
-                        className="form-control"
                         placeholder="Confirm Password"
-                        id="ConfirmPassword"
                         required
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />
@@ -154,11 +152,9 @@ const VMImageCreatePage = () => {
                       Description
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <textarea
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Description"
-                        id="Email"
                         required
                         onChange={(e) => setDescription(e.target.value)}
                       />
@@ -166,18 +162,16 @@ const VMImageCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="download"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Download URL
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Download URL"
-                        id="download"
                         required
                         onChange={(e) => setDownloadUrl(e.target.value)}
                       />
@@ -188,14 +182,12 @@ const VMImageCreatePage = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select valid option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        // defaultValue={defaultSelected}
                       />
                     </Col>
                   </Row>
@@ -203,10 +195,13 @@ const VMImageCreatePage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleCreate}>
                         Create
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

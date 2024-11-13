@@ -86,6 +86,12 @@ export const DashboardMenu = [
   },
   {
     id: uuid(),
+    title: "Configuration",
+    icon: "settings",
+    link: "/session",
+  },
+  {
+    id: uuid(),
     title: "Logs",
     icon: "calendar",
     link: "/logs",

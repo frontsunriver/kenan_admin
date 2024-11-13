@@ -1,48 +1,49 @@
 import { Container } from "react-bootstrap";
-
 import { PageHeading } from "widgets";
-
 import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-
 import { FormSelect } from "widgets";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
+import CustomInput from "components/CustomInput";
 
 const UserDetailPage = () => {
   const [email, setEmail] = useState("");
   const [type, setType] = useState("");
+  const [defaultValue, setDefaultValue] = useState();
   const router = useRouter();
   const { id } = router.query;
+  const { showToast } = useToast();
 
-  const countryOptions = [
-    { value: "1", label: "Enabled" },
-    { value: "0", label: "Disabled" },
+  const validOption = [
+    { value: 1, label: "Enabled" },
+    { value: 0, label: "Disabled" },
   ];
 
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/user/findById`, { id: id }).then((res) => {
         if (res.data.success) {
-          setEmail(res.data.data.email);
-          setType(res.data.data.is_valid);
+          setEmail(res.data.data[0].email);
+          setDefaultValue(getOptionByValue(res.data.data[0].is_valid));
+          setType(res.data.data[0].is_valid);
         } else {
-          // toast.error(res.data.message);
+          showToast("Error", "Something went wrong", "failure");
         }
       });
     }
   }, [id]);
 
+  const getOptionByValue = (value) => {
+    return validOption.find((option) => option.value === value) || null;
+  };
+
   const handleUpdate = async () => {
     if (email == "") {
-      toast.error("Please fill email!");
-      return;
-    }
-    if (type == "") {
-      toast.error("Please select type!");
+      showToast("Error", "Please fill email!", "failure");
       return;
     }
 
@@ -54,23 +55,23 @@ const UserDetailPage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("User has been updated successfully");
+          showToast("Success", "User has been updated.", "success");
           router.push("/user");
         } else {
-          console.log("error");
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    console.log(e);
+    setType(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
       <PageHeading heading="Update user" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -87,31 +88,27 @@ const UserDetailPage = () => {
                       Email
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="email"
-                        className="form-control"
                         placeholder="Email"
-                        id="Email"
-                        value={email}
                         required
                         onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                       />
                     </div>
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Type"
-                        id="country"
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select valid option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        defaultValue={defaultValue}
                         value={type}
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
                       />
                     </Col>
                   </Row>
@@ -119,10 +116,13 @@ const UserDetailPage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleUpdate}>
                         Update
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

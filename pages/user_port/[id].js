@@ -1,30 +1,42 @@
 import { Container } from "react-bootstrap";
-
 import { PageHeading } from "widgets";
-
 import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-
-import { FormSelect } from "widgets";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
 
 const UserPortDetail = () => {
+  const { showToast } = useToast();
   const [portMapId, setPortMapId] = useState("");
   const [userId, setUserId] = useState("");
   const [type, setType] = useState("");
   const [userOptions, setUserOptions] = useState([]);
   const [portOptions, setPortOptions] = useState([]);
+  const [defaultUserOption, setDefaultUserOption] = useState(null);
+  const [defaultPortOption, setDefaultPortOption] = useState(null);
+  const [defaultStatus, setDefaultStatus] = useState(null);
   const router = useRouter();
   const { id } = router.query;
 
-  const countryOptions = [
-    { value: "1", label: "Enabled" },
-    { value: "0", label: "Disabled" },
+  const validOption = [
+    { value: 1, label: "Enabled" },
+    { value: 0, label: "Disabled" },
   ];
+
+  const getOptionByValue = (value) => {
+    return validOption.find((option) => option.value === value) || null;
+  };
+
+  const getUserOptionValue = (value) => {
+    return userOptions.find((option) => option.value === value) || null;
+  };
+
+  const getPortOptionValue = (value) => {
+    return portOptions.find((option) => option.value === value) || null;
+  };
 
   useEffect(() => {
     axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
@@ -54,31 +66,25 @@ const UserPortDetail = () => {
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/userPort/findById`, { id: id }).then((res) => {
-        if (res.data.success) {
-          setPortMapId(res.data.data.port_map_id);
-          setUserId(res.data.data.user_id);
-          setType(res.data.data.is_valid);
+        if (res.data.status == 200) {
+          setPortMapId(res.data.data.data[0].port_map_id);
+          setUserId(res.data.data.data[0].user_id);
+          setType(res.data.data.data[0].is_valid);
+          setDefaultPortOption(
+            getPortOptionValue(res.data.data.data[0].port_map_id)
+          );
+          setDefaultUserOption(
+            getUserOptionValue(res.data.data.data[0].user_id)
+          );
+          setDefaultStatus(getOptionByValue(res.data.data.data[0].is_valid));
         } else {
-          // toast.error(res.data.message);
+          showToast("Error", "Something went wrong", "failure");
         }
       });
     }
-  }, [id]);
+  }, [id, portOptions, userOptions]);
 
   const handleUpdate = async () => {
-    if (portMapId == "") {
-      toast.error("Please select port!");
-      return;
-    }
-    if (userId == "") {
-      toast.error("Please select user!");
-      return;
-    }
-    if (type == "") {
-      toast.error("Please select status!");
-      return;
-    }
-
     await axios
       .post(`${SERVER_URL}/userPort/update`, {
         id: id,
@@ -88,31 +94,30 @@ const UserPortDetail = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("Item has been updated successfully");
+          showToast("Success", "Item has been updated successfully", "success");
           router.push("/user_port");
         } else {
-          console.log("error");
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   const handleUserChange = (e) => {
-    setUserId(e.target.value);
+    setUserId(e.value);
   };
 
   const handlePortChange = (e) => {
-    setPortMapId(e.target.value);
+    setPortMapId(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
       <PageHeading heading="Update User Port" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -120,21 +125,18 @@ const UserPortDetail = () => {
             <Card.Body>
               <div>
                 <Form>
-                  {/* row */}
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
                       User
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select User"
-                        id="country"
-                        value={userId}
+                      <CustomSelect
                         options={userOptions}
-                        onChange={(e) => {
-                          handleUserChange(e);
-                        }}
+                        placeHolder="Select user option"
+                        onChange={handleUserChange}
+                        className="border rounded"
+                        defaultValue={defaultUserOption}
+                        value={userId}
                       />
                     </Col>
                   </Row>
@@ -143,15 +145,13 @@ const UserPortDetail = () => {
                       Port
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Port"
-                        id="country"
-                        value={portMapId}
+                      <CustomSelect
                         options={portOptions}
-                        onChange={(e) => {
-                          handlePortChange(e);
-                        }}
+                        placeHolder="Select port option"
+                        onChange={handlePortChange}
+                        className="border rounded"
+                        defaultValue={defaultPortOption}
+                        value={portMapId}
                       />
                     </Col>
                   </Row>
@@ -160,15 +160,13 @@ const UserPortDetail = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select status option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        defaultValue={defaultStatus}
                         value={type}
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
                       />
                     </Col>
                   </Row>
@@ -176,10 +174,13 @@ const UserPortDetail = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleUpdate}>
                         Update
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

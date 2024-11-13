@@ -9,9 +9,6 @@ import { useAuth } from "provider/AuthContext";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 
-// import data files
-import NotificationList from "data/Notification";
-
 // import hooks
 import useMounted from "hooks/useMounted";
 import { useRouter } from "next/router";
@@ -22,32 +19,6 @@ const QuickMenu = () => {
   const isDesktop = useMediaQuery({
     query: "(min-width: 1224px)",
   });
-
-  const Notifications = () => {
-    return (
-      <SimpleBar style={{ maxHeight: "300px" }}>
-        <ListGroup variant="flush">
-          {NotificationList.map(function (item, index) {
-            return (
-              <ListGroup.Item
-                className={index === 0 ? "bg-light" : ""}
-                key={index}
-              >
-                <Row>
-                  <Col>
-                    <Link href="#" className="text-muted">
-                      <h5 className=" mb-1">{item.sender}</h5>
-                      <p className="mb-0"> {item.message}</p>
-                    </Link>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-            );
-          })}
-        </ListGroup>
-      </SimpleBar>
-    );
-  };
 
   const { loggedIn, userInfo, logout } = useAuth();
 
@@ -76,7 +47,7 @@ const QuickMenu = () => {
             <div className="avatar avatar-md avatar-indicators avatar-online">
               <Image
                 alt="avatar"
-                src="/images/avatar/avatar-1.jpg"
+                src="/images/avatar/user-profile-icon.svg"
                 className="rounded-circle"
               />
             </div>
@@ -137,31 +108,6 @@ const QuickMenu = () => {
           >
             <i className="fe fe-bell"></i>
           </Dropdown.Toggle>
-          <Dropdown.Menu
-            className="dashboard-dropdown notifications-dropdown dropdown-menu-lg dropdown-menu-end py-0"
-            aria-labelledby="dropdownNotification"
-            align="end"
-          >
-            <Dropdown.Item className="mt-3" bsPrefix=" " as="div">
-              <div className="border-bottom px-3 pt-0 pb-3 d-flex justify-content-between align-items-end">
-                <span className="h4 mb-0">Notifications</span>
-                <Link href="/" className="text-muted">
-                  <span className="align-middle">
-                    <i className="fe fe-settings me-1"></i>
-                  </span>
-                </Link>
-              </div>
-              <Notifications />
-              <div className="border-top px-3 pt-3 pb-3">
-                <Link
-                  href="/dashboard/notification-history"
-                  className="text-link fw-semi-bold"
-                >
-                  See all Notifications
-                </Link>
-              </div>
-            </Dropdown.Item>
-          </Dropdown.Menu>
         </Dropdown>
         <Dropdown as="li" className="ms-2">
           <Dropdown.Toggle

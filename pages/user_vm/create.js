@@ -7,16 +7,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
 
 const UserPortCreatePage = () => {
+  const { showToast } = useToast();
   const router = useRouter();
   const [userId, setUserId] = useState("");
   const [vmId, setVmId] = useState("");
   const [type, setType] = useState("");
   const [userOption, setUserOption] = useState([]);
-  const [portOption, setPortOption] = useState([]);
+  const [vmImageOption, setVmImageOption] = useState([]);
 
   useEffect(() => {
     axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
@@ -36,29 +37,29 @@ const UserPortCreatePage = () => {
         res.data.data.map((port) => {
           ports.push({ value: port.id, label: port.title });
         });
-        setPortOption(ports);
+        setVmImageOption(ports);
       } else {
         console.log("error");
       }
     });
   }, []);
 
-  const countryOptions = [
+  const validOption = [
     { value: "1", label: "Enabled" },
     { value: "0", label: "Disabled" },
   ];
 
   const handleCreate = async () => {
     if (vmId == "") {
-      toast.error("Please select vm image!");
+      showToast("Error", "Please select vm image!", "failure");
       return;
     }
     if (userId == "") {
-      toast.error("Please select user!");
+      showToast("Error", "Please select user!", "failure");
       return;
     }
     if (type == "") {
-      toast.error("Please select status!");
+      showToast("Error", "Please select status!", "failure");
       return;
     }
 
@@ -70,30 +71,28 @@ const UserPortCreatePage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("Item has been created.");
-          router.push("/user_vm");
+          showToast("Success", "Item has been created", "success");
         } else {
-          toast.error(res.data.message);
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   const handleUserChange = (e) => {
-    setUserId(e.target.value);
+    setUserId(e.value);
   };
 
-  const handlePortChange = (e) => {
-    setVmId(e.target.value);
+  const handleVmImageChange = (e) => {
+    setVmId(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       <PageHeading heading="Create User VM Image" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -105,14 +104,11 @@ const UserPortCreatePage = () => {
                       User
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select User"
-                        id="user"
+                      <CustomSelect
                         options={userOption}
-                        onChange={(e) => {
-                          handleUserChange(e);
-                        }}
+                        placeHolder="Select User"
+                        onChange={handleUserChange}
+                        className="border rounded"
                       />
                     </Col>
                   </Row>
@@ -121,14 +117,11 @@ const UserPortCreatePage = () => {
                       VM Image
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select VM Image"
-                        id="port"
-                        options={portOption}
-                        onChange={(e) => {
-                          handlePortChange(e);
-                        }}
+                      <CustomSelect
+                        options={vmImageOption}
+                        placeHolder="Select VM Image"
+                        onChange={handleVmImageChange}
+                        className="border rounded"
                       />
                     </Col>
                   </Row>
@@ -137,14 +130,12 @@ const UserPortCreatePage = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select Status"
+                        onChange={handleChange}
+                        className="border rounded"
+                        // defaultValue={defaultSelected}
                       />
                     </Col>
                   </Row>
@@ -152,10 +143,13 @@ const UserPortCreatePage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleCreate}>
                         Create
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

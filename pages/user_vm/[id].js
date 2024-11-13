@@ -9,22 +9,37 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
 
 const UserPortDetail = () => {
+  const { showToast } = useToast();
   const [vmId, setVMId] = useState("");
   const [userId, setUserId] = useState("");
   const [type, setType] = useState("");
   const [userOptions, setUserOptions] = useState([]);
-  const [portOptions, setPortOptions] = useState([]);
+  const [vmImageOption, setVmImageOption] = useState([]);
+  const [defaultUserOption, setDefaultUserOption] = useState(null);
+  const [defaultVMImageOption, setDefaultVMImageOption] = useState(null);
+  const [defaultStatus, setDefaultStatus] = useState(null);
   const router = useRouter();
   const { id } = router.query;
-
-  const countryOptions = [
-    { value: "1", label: "Enabled" },
-    { value: "0", label: "Disabled" },
+  const validOption = [
+    { value: 1, label: "Enabled" },
+    { value: 0, label: "Disabled" },
   ];
+
+  const getOptionByValue = (value) => {
+    return validOption.find((option) => option.value === value) || null;
+  };
+
+  const getUserOptionValue = (value) => {
+    return userOptions.find((option) => option.value === value) || null;
+  };
+
+  const getVMImageOptionValue = (value) => {
+    return vmImageOption.find((option) => option.value === value) || null;
+  };
 
   useEffect(() => {
     axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
@@ -44,7 +59,7 @@ const UserPortDetail = () => {
         res.data.data.map((image) => {
           ports.push({ value: image.id, label: image.title });
         });
-        setPortOptions(ports);
+        setVmImageOption(ports);
       } else {
         console.log("error");
       }
@@ -54,31 +69,23 @@ const UserPortDetail = () => {
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/uservm/findById`, { id: id }).then((res) => {
-        if (res.data.success) {
-          setVMId(res.data.data.port_map_id);
-          setUserId(res.data.data.user_id);
-          setType(res.data.data.is_valid);
+        if (res.data.status == 200) {
+          setVMId(res.data.data.data.vm_image_id);
+          setUserId(res.data.data.data.user_id);
+          setType(res.data.data.data.is_valid);
+          setDefaultVMImageOption(
+            getVMImageOptionValue(res.data.data.data.vm_image_id)
+          );
+          setDefaultUserOption(getUserOptionValue(res.data.data.data.user_id));
+          setDefaultStatus(getOptionByValue(res.data.data.data.is_valid));
         } else {
-          // toast.error(res.data.message);
+          showToast("Error", "Something went wrong", "failure");
         }
       });
     }
-  }, [id]);
+  }, [id, vmImageOption, userOptions]);
 
   const handleUpdate = async () => {
-    if (vmId == "") {
-      toast.error("Please select vm image!");
-      return;
-    }
-    if (userId == "") {
-      toast.error("Please select user!");
-      return;
-    }
-    if (type == "") {
-      toast.error("Please select status!");
-      return;
-    }
-
     await axios
       .post(`${SERVER_URL}/uservm/update`, {
         id: id,
@@ -88,31 +95,30 @@ const UserPortDetail = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("Item has been updated successfully");
+          showToast("Success", "Item has been updated successfully", "success");
           router.push("/user_vm");
         } else {
-          console.log("error");
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   const handleUserChange = (e) => {
-    setUserId(e.target.value);
+    setUserId(e.value);
   };
 
-  const handlePortChange = (e) => {
-    setVMId(e.target.value);
+  const handleVmImageChange = (e) => {
+    setVMId(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
       <PageHeading heading="Update User VM" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -120,21 +126,17 @@ const UserPortDetail = () => {
             <Card.Body>
               <div>
                 <Form>
-                  {/* row */}
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
                       User
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select User"
-                        id="country"
-                        value={userId}
+                      <CustomSelect
                         options={userOptions}
-                        onChange={(e) => {
-                          handleUserChange(e);
-                        }}
+                        placeHolder="Select User"
+                        onChange={handleUserChange}
+                        className="border rounded"
+                        defaultValue={defaultUserOption}
                       />
                     </Col>
                   </Row>
@@ -143,15 +145,12 @@ const UserPortDetail = () => {
                       VM Image
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select vm image"
-                        id="country"
-                        value={vmId}
-                        options={portOptions}
-                        onChange={(e) => {
-                          handlePortChange(e);
-                        }}
+                      <CustomSelect
+                        options={vmImageOption}
+                        placeHolder="Select VM Image"
+                        onChange={handleVmImageChange}
+                        defaultValue={defaultVMImageOption}
+                        className="border rounded"
                       />
                     </Col>
                   </Row>
@@ -160,15 +159,12 @@ const UserPortDetail = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
-                        value={type}
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select Status"
+                        onChange={handleChange}
+                        className="border rounded"
+                        defaultValue={defaultStatus}
                       />
                     </Col>
                   </Row>
@@ -176,10 +172,13 @@ const UserPortDetail = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleUpdate}>
                         Update
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

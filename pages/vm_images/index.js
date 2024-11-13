@@ -4,13 +4,22 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import { formatFileSize } from "utils/utility";
-import "react-toastify/dist/ReactToastify.css";
+import { formatFileSize, formatTimestamp } from "utils/utility";
+import { useToast } from "provider/ToastContext";
+import SearchBox from "components/Search";
+import CustomSelect from "components/CustomSelect";
 
 const VMImageManagementPage = () => {
   const [data, setData] = useState([]);
+  const [flag, setFlag] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const { showToast } = useToast();
   const router = useRouter();
+  const validOption = [
+    { label: "All", value: "" },
+    { label: "Enabled", value: "1" },
+    { label: "Disabled", value: "0" },
+  ];
   const columns = [
     {
       name: "Title",
@@ -33,7 +42,7 @@ const VMImageManagementPage = () => {
     {
       name: "Download URL",
       selector: (row) => row.download_url,
-      grow: 1,
+      grow: 2,
       sortable: true,
     },
     {
@@ -46,7 +55,9 @@ const VMImageManagementPage = () => {
     },
     {
       name: "Created At",
-      selector: (row) => row.created_at,
+      selector: (row) => {
+        return formatTimestamp(row.created_at);
+      },
       grow: 1,
       sortable: true,
     },
@@ -54,11 +65,11 @@ const VMImageManagementPage = () => {
       name: "Valid",
       selector: (row) => {
         return row.is_valid == 1 ? (
-          <Badge pill bg="primary" className="me-1">
+          <Badge pill bg="success" className="me-1">
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="success" className="me-1">
+          <Badge pill bg="danger" className="me-1">
             Disabled
           </Badge>
         );
@@ -70,25 +81,47 @@ const VMImageManagementPage = () => {
       name: "Action",
       selector: (row) => {
         return (
-          <div className="flex items-center">
-            <Button
-              variant="primary"
-              className="me-1"
+          <div className="d-flex items-center">
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-success"
               onClick={() => {
                 handleGoDetail(row.id);
               }}
+              title="Edit"
             >
               <i className={`nav-icon fe fe-edit`}></i>
-            </Button>
-            <Button
-              variant="primary"
-              className="me-1"
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-danger"
               onClick={() => {
                 handleDelete(row.id);
               }}
+              title="Delete"
             >
               <i className={`nav-icon fe fe-trash`}></i>
-            </Button>
+            </div>
           </div>
         );
       },
@@ -106,27 +139,31 @@ const VMImageManagementPage = () => {
   };
 
   useEffect(() => {
-    getData();
+    getData(keyword, flag);
   }, []);
 
-  const getData = () => {
-    axios.post(`${SERVER_URL}/vmimage/getAll`).then((res) => {
-      if (res.data.success) {
-        setData(res.data.data);
-        console.log(res.data);
-      } else {
-        console.log("error");
-      }
-    });
+  const getData = (searchKeyword, valid) => {
+    axios
+      .post(`${SERVER_URL}/vmimage/getAll`, {
+        keyword: searchKeyword,
+        flag: valid,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setData(res.data.data);
+        } else {
+          showToast("Error", "Something went wrong!", "failure");
+        }
+      });
   };
 
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/vmimage/remove`, { id: id }).then((res) => {
       if (res.data.success) {
-        getData();
-        toast.success("Item has been deleted successfully");
+        getData(keyword, flag);
+        showToast("Success", "Item has been deleted successfully!", "success");
       } else {
-        console.log("error");
+        showToast("Error", "Something went wrong!", "failure");
       }
     });
   };
@@ -139,9 +176,17 @@ const VMImageManagementPage = () => {
     router.push(`/vm_images/${id}`);
   };
 
+  const handleSearch = () => {
+    getData(keyword, flag);
+  };
+
+  const handleValidOption = (e) => {
+    setFlag(e.value);
+    getData(keyword, e.value);
+  };
+
   return (
     <Container fluid className="p-6">
-      <ToastContainer />
       <Row>
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
@@ -152,9 +197,6 @@ const VMImageManagementPage = () => {
                 their prevalent use in JavaScript plugins) with Bootstrap.
               </p> */}
             </div>
-            <Button variant="primary" onClick={handleCreate}>
-              Create
-            </Button>
           </div>
         </Col>
       </Row>
@@ -163,6 +205,25 @@ const VMImageManagementPage = () => {
         <Col xl={12} lg={12} md={12} sm={12}>
           <Tab.Container defaultActiveKey="design">
             <Card>
+              <Card.Body className="d-flex justify-content-between align-items-center ">
+                <div className="d-flex p-3 gap-2">
+                  <SearchBox
+                    onChange={setKeyword}
+                    onSearch={handleSearch}
+                    placeholder="Search..."
+                  />
+                  <CustomSelect
+                    options={validOption}
+                    placeHolder="Select valid option"
+                    onChange={handleValidOption}
+                    className="border rounded"
+                    // defaultValue={defaultSelected}
+                  />
+                </div>
+                <Button variant="primary" onClick={handleCreate}>
+                  <i className="fe fe-plus me-2"></i> Create
+                </Button>
+              </Card.Body>
               <Card.Body className="p-3">
                 <DataTable
                   columns={columns}

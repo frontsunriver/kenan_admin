@@ -4,12 +4,13 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import { formatTimestamp } from "utils/utility";
 
 let selectedRecord = [];
 const UserManagementPage = () => {
   const [data, setData] = useState([]);
+  const { showToast } = useToast();
   const router = useRouter();
   const { id } = router.query;
 
@@ -35,7 +36,7 @@ const UserManagementPage = () => {
     },
     {
       name: "Created At",
-      selector: (row) => row.created_at,
+      selector: (row) => formatTimestamp(row.created_at),
       grow: 1,
       sortable: true,
     },
@@ -70,14 +71,13 @@ const UserManagementPage = () => {
           selectedRecord = updatedVMList.filter((item) => item.is_selected);
           setData(updatedVMList);
         } else {
-          toast.error("Error fetching user VM list");
+          showToast("Error", "Error fetching user VM list", "failure");
         }
       } else {
-        toast.error("Error fetching VM list");
+        showToast("Error", "Error fetching user VM list", "failure");
       }
     } catch (error) {
-      console.error("An error occurred:", error);
-      toast.error("An unexpected error occurred");
+      showToast("Error", "An unexpected error occurred", "failure");
     }
   };
 
@@ -99,20 +99,22 @@ const UserManagementPage = () => {
         data: selectedRecord,
         id: id,
       })
-      .then((res) => {});
-    router.push("/user");
+      .then((res) => {
+        if (res.data.success) {
+          getVmList();
+          showToast("Success", "User VM Image updated successfully", "success");
+        } else {
+          showToast("Error", "An unexpected error occurred", "failure");
+        }
+      });
   };
 
   return (
     <Container fluid className="p-6">
-      <ToastContainer />
       <Row>
         <Col lg={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <h1 className="mb-1 h2 fw-bold">User VM Image Management</h1>
-            <Button variant="primary" onClick={handleUpdate}>
-              Update
-            </Button>
           </div>
         </Col>
       </Row>
@@ -120,6 +122,14 @@ const UserManagementPage = () => {
         <Col xl={12}>
           <Tab.Container defaultActiveKey="design">
             <Card>
+              <Card.Body className="d-flex justify-content-end gap-2">
+                <Button variant="primary" onClick={handleUpdate}>
+                  Update
+                </Button>
+                <Button variant="danger" onClick={() => router.back()}>
+                  Back
+                </Button>
+              </Card.Body>
               <Card.Body className="p-3">
                 <DataTable
                   columns={columns}

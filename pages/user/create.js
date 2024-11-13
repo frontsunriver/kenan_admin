@@ -1,34 +1,32 @@
 import { Container } from "react-bootstrap";
-
 import { PageHeading } from "widgets";
-import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-import { FormSelect } from "widgets";
+import { Col, Row, Form, Card, Button } from "react-bootstrap";
+import CustomSelect from "components/CustomSelect";
 import { useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomInput from "components/CustomInput";
 
 const UserCreatePage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [type, setType] = useState("");
-  const [preview, setPreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { showToast } = useToast();
 
-  const countryOptions = [
+  const validOption = [
     { value: "1", label: "Enabled" },
     { value: "0", label: "Disabled" },
   ];
 
   const handleCreate = async () => {
     if (email == "") {
-      toast.error("Please fill email!");
+      showToast("Error", "Please fill email!", "failure");
       return;
     }
     if (type == "") {
-      toast.error("Please select type!");
+      showToast("Error", "Please select status!", "failure");
       return;
     }
 
@@ -40,22 +38,25 @@ const UserCreatePage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("User has been created. Password is 123456789");
+          showToast(
+            "Success",
+            "User has been created. Password is 123456",
+            "success"
+          );
           router.push("/user");
         } else {
-          console.log("error");
+          showToast("Error", res.data.message, "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       <PageHeading heading="Create User" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -73,11 +74,9 @@ const UserCreatePage = () => {
                       email
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="email"
-                        className="form-control"
                         placeholder="Email"
-                        id="Email"
                         required
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -85,17 +84,15 @@ const UserCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Type"
-                        id="country"
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select valid option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        // defaultValue={defaultSelected}
                       />
                     </Col>
                   </Row>
@@ -103,10 +100,13 @@ const UserCreatePage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleCreate}>
                         Create
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

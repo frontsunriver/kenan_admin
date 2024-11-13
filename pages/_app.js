@@ -8,9 +8,15 @@ import { Analytics } from "@vercel/analytics/react";
 // import theme style scss file
 import "styles/theme.scss";
 
+// import "../components/Icons/Icons.css";
+// import "../components/Toast/Toast.css";
+// import "../components/ToastList/ToastList.css";
+
 // import default layouts
 import DefaultDashboardLayout from "layouts/DefaultDashboardLayout";
 import { AuthProvider } from "provider/AuthContext";
+import { ToastProvider } from "provider/ToastContext";
+import ToastList from "../components/ToastList/ToastList";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -48,10 +54,13 @@ function MyApp({ Component, pageProps }) {
         }}
       />
       <AuthProvider>
-        <Layout>
-          <Component {...pageProps} />
-          <Analytics />
-        </Layout>
+        <ToastProvider>
+          <Layout>
+            <Component {...pageProps} />
+            <Analytics />
+          </Layout>
+          <ToastList />
+        </ToastProvider>
       </AuthProvider>
     </SSRProvider>
   );

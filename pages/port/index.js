@@ -4,12 +4,22 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import CustomSelect from "components/CustomSelect";
+import SearchBox from "components/Search";
+import { useToast } from "provider/ToastContext";
 
 const PortManagementPage = () => {
+  const { showToast } = useToast();
   const [data, setData] = useState([]);
+  const [flag, setFlag] = useState("");
+  const [keyword, setKeyword] = useState("");
   const router = useRouter();
+
+  const validOption = [
+    { label: "All", value: "" },
+    { label: "Enabled", value: "1" },
+    { label: "Disabled", value: "0" },
+  ];
   const columns = [
     {
       name: "Title",
@@ -36,44 +46,80 @@ const PortManagementPage = () => {
       sortable: true,
     },
     {
-      name: "Valid",
+      name: "Is Https",
+      selector: (row) => {
+        return row.is_https == 1 ? (
+          <Badge pill bg="success" className="me-1">
+            Yes
+          </Badge>
+        ) : (
+          <Badge pill bg="danger" className="me-1">
+            No
+          </Badge>
+        );
+      },
+      grow: 1,
+    },
+    {
+      name: "Status",
       selector: (row) => {
         return row.is_active == 1 ? (
-          <Badge pill bg="primary" className="me-1">
+          <Badge pill bg="success" className="me-1">
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="success" className="me-1">
+          <Badge pill bg="danger" className="me-1">
             Disabled
           </Badge>
         );
       },
-      sortable: true,
       grow: 1,
     },
     {
       name: "Action",
       selector: (row) => {
         return (
-          <div className="flex items-center">
-            <Button
-              variant="primary"
-              className="me-1"
+          <div className="d-flex align-items-center">
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-success"
               onClick={() => {
                 handleGoDetail(row.id);
               }}
+              title="Edit"
             >
               <i className={`nav-icon fe fe-edit`}></i>
-            </Button>
-            <Button
-              variant="primary"
-              className="me-1"
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-danger"
               onClick={() => {
                 handleDelete(row.id);
               }}
+              title="Delete"
             >
               <i className={`nav-icon fe fe-trash`}></i>
-            </Button>
+            </div>
           </div>
         );
       },
@@ -91,25 +137,29 @@ const PortManagementPage = () => {
   };
 
   useEffect(() => {
-    getData();
+    getData(keyword, flag);
   }, []);
 
-  const getData = () => {
-    axios.post(`${SERVER_URL}/port/getAll`).then((res) => {
-      if (res.data.status == 200) {
-        console.log(res.data.data.data);
-        setData(res.data.data.data);
-      } else {
-        console.log("error");
-      }
-    });
+  const getData = (searchKeyword, valid) => {
+    axios
+      .post(`${SERVER_URL}/port/getAll`, {
+        keyword: searchKeyword,
+        flag: valid,
+      })
+      .then((res) => {
+        if (res.data.status == 200) {
+          setData(res.data.data.data);
+        } else {
+          console.log("error");
+        }
+      });
   };
 
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/port/remove`, { id: id }).then((res) => {
       if (res.data.success) {
-        getData();
-        toast.success("Item has been deleted successfully");
+        getData(keyword, flag);
+        showToast("Success", "Item has been deleted successfully", "success");
       } else {
         console.log("error");
       }
@@ -124,18 +174,23 @@ const PortManagementPage = () => {
     router.push(`/port/${id}`);
   };
 
+  const handleSearch = () => {
+    getData(keyword, flag);
+  };
+
+  const handleValidOption = (e) => {
+    setFlag(e.value);
+    getData(keyword, e.value);
+  };
+
   return (
     <Container fluid className="p-6">
-      <ToastContainer />
       <Row>
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
               <h1 className="mb-1 h2 fw-bold">Port Management</h1>
             </div>
-            <Button variant="primary" onClick={handleCreate}>
-              Create
-            </Button>
           </div>
         </Col>
       </Row>
@@ -144,6 +199,25 @@ const PortManagementPage = () => {
         <Col xl={12} lg={12} md={12} sm={12}>
           <Tab.Container defaultActiveKey="design">
             <Card>
+              <Card.Body className="d-flex justify-content-between align-items-center ">
+                <div className="d-flex p-3 gap-2">
+                  <SearchBox
+                    onChange={setKeyword}
+                    onSearch={handleSearch}
+                    placeholder="Search..."
+                  />
+                  <CustomSelect
+                    options={validOption}
+                    placeHolder="Select status option"
+                    onChange={handleValidOption}
+                    className="border rounded"
+                    // defaultValue={defaultSelected}
+                  />
+                </div>
+                <Button variant="primary" onClick={handleCreate}>
+                  <i className="fe fe-plus me-2"></i> Create
+                </Button>
+              </Card.Body>
               <Card.Body className="p-3">
                 <DataTable
                   columns={columns}

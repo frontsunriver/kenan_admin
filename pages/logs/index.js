@@ -7,6 +7,7 @@ import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { formatTimestamp } from "utils/utility";
 
 const AdminManagementPage = () => {
   const [data, setData] = useState([]);
@@ -60,7 +61,9 @@ const AdminManagementPage = () => {
     },
     {
       name: "Time",
-      selector: (row) => row.time,
+      selector: (row) => {
+        return formatTimestamp(row.time);
+      },
       grow: 1,
       sortable: true,
     },

@@ -4,12 +4,23 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
+import SearchBox from "components/Search";
+import { formatTimestamp } from "utils/utility";
 
 const UserManagementPage = () => {
+  const { showToast } = useToast();
   const [data, setData] = useState([]);
+  const [flag, setFlag] = useState("");
+  const [keyword, setKeyword] = useState("");
   const router = useRouter();
+  const validOption = [
+    { label: "All", value: "" },
+    { label: "Enabled", value: "1" },
+    { label: "Disabled", value: "0" },
+  ];
+
   const columns = [
     {
       name: "email",
@@ -25,13 +36,17 @@ const UserManagementPage = () => {
     },
     {
       name: "Last Login At",
-      selector: (row) => row.last_login_at,
+      selector: (row) => {
+        return formatTimestamp(row.last_login_at);
+      },
       grow: 1,
       sortable: true,
     },
     {
       name: "Created At",
-      selector: (row) => row.created_at,
+      selector: (row) => {
+        return formatTimestamp(row.created_at);
+      },
       grow: 1,
       sortable: true,
     },
@@ -39,11 +54,11 @@ const UserManagementPage = () => {
       name: "Valid",
       selector: (row) => {
         return row.is_valid == 1 ? (
-          <Badge pill bg="primary" className="me-1">
+          <Badge pill bg="success" className="me-1">
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="success" className="me-1">
+          <Badge pill bg="danger" className="me-1">
             Disabled
           </Badge>
         );
@@ -55,51 +70,111 @@ const UserManagementPage = () => {
       name: "Action",
       selector: (row) => {
         return (
-          <div className="flex items-center">
-            <Button
-              variant="primary"
-              className="me-1"
+          <div className="d-flex items-center">
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-success"
               onClick={() => {
                 handleGoDetail(row.id);
               }}
               title="Edit"
             >
               <i className={`nav-icon fe fe-edit`}></i>
-            </Button>
-            <Button
-              variant="primary"
-              className="me-1"
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-danger"
               onClick={() => {
                 handleDelete(row.id);
               }}
               title="Delete"
             >
               <i className={`nav-icon fe fe-trash`}></i>
-            </Button>
-            <Button
-              variant="primary"
-              className="me-1"
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-info"
               onClick={() => {
                 handleGoVm(row.id);
               }}
-              title="VM Machine"
+              title="VM Image"
             >
               <i className={`nav-icon fe fe-airplay`}></i>
-            </Button>
-            <Button
-              variant="primary"
-              className="me-1"
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-primary"
               onClick={() => {
                 handleGoPort(row.id);
               }}
               title="Port"
             >
               <i className={`nav-icon fe fe-shield`}></i>
-            </Button>
+            </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-warning"
+              onClick={() => {
+                handleGoConfiguration(row.id);
+              }}
+              title="Configuration"
+            >
+              <i className={`nav-icon fe fe-settings`}></i>
+            </div>
           </div>
         );
       },
-      grow: 2,
+      grow: 1,
     },
   ];
 
@@ -113,27 +188,32 @@ const UserManagementPage = () => {
   };
 
   useEffect(() => {
-    getData();
+    getData(keyword, flag);
   }, []);
 
-  const getData = () => {
-    axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
-      if (res.data.success) {
-        setData(res.data.data);
-        console.log(res.data);
-      } else {
-        console.log("error");
-      }
-    });
+  const getData = (searchKeyword, valid) => {
+    axios
+      .post(`${SERVER_URL}/user/getAll`, {
+        keyword: searchKeyword,
+        flag: valid,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setData(res.data.data);
+          console.log(res.data);
+        } else {
+          showToast("Error", "Something went wrong!", "failure");
+        }
+      });
   };
 
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/user/remove`, { id: id }).then((res) => {
       if (res.data.success) {
         getData();
-        toast.success("User has been deleted successfully");
+        showToast("Success", "User has been deleted successfully!", "success");
       } else {
-        console.log("error");
+        showToast("Error", "Something went wrong!", "failure");
       }
     });
   };
@@ -154,9 +234,21 @@ const UserManagementPage = () => {
     router.push(`/user/port/${id}`);
   };
 
+  const handleGoConfiguration = (id) => {
+    router.push(`/user/user_config/${id}`);
+  };
+
+  const handleSearch = () => {
+    getData(keyword, flag);
+  };
+
+  const handleValidOption = (e) => {
+    setFlag(e.value);
+    getData(keyword, e.value);
+  };
+
   return (
     <Container fluid className="p-6">
-      <ToastContainer />
       <Row>
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
@@ -167,9 +259,6 @@ const UserManagementPage = () => {
                 their prevalent use in JavaScript plugins) with Bootstrap.
               </p> */}
             </div>
-            <Button variant="primary" onClick={handleCreate}>
-              Create
-            </Button>
           </div>
         </Col>
       </Row>
@@ -178,6 +267,25 @@ const UserManagementPage = () => {
         <Col xl={12} lg={12} md={12} sm={12}>
           <Tab.Container defaultActiveKey="design">
             <Card>
+              <Card.Body className="d-flex justify-content-between align-items-center ">
+                <div className="d-flex p-3 gap-2">
+                  <SearchBox
+                    onChange={setKeyword}
+                    onSearch={handleSearch}
+                    placeholder="Search..."
+                  />
+                  <CustomSelect
+                    options={validOption}
+                    placeHolder="Select valid option"
+                    onChange={handleValidOption}
+                    className="border rounded"
+                    // defaultValue={defaultSelected}
+                  />
+                </div>
+                <Button variant="primary" onClick={handleCreate}>
+                  <i className="fe fe-plus me-2"></i> Create
+                </Button>
+              </Card.Body>
               <Card.Body className="p-3">
                 <DataTable
                   columns={columns}

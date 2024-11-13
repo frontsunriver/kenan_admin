@@ -1,29 +1,37 @@
 import { Container } from "react-bootstrap";
-
 import { PageHeading } from "widgets";
-
 import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-
-import { FormSelect } from "widgets";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomInput from "components/CustomInput";
+import CustomSelect from "components/CustomSelect";
 
 const UserDetailPage = () => {
+  const { showToast } = useToast();
   const [machineId, setMachineId] = useState("");
   const [userId, setUserId] = useState("");
   const [type, setType] = useState("");
   const [userOptions, setUserOptions] = useState([]);
+  const [defaultUserOption, setDefaultUserOption] = useState(null);
+  const [defaultStatus, setDefaultStatus] = useState(null);
   const router = useRouter();
   const { id } = router.query;
 
-  const countryOptions = [
-    { value: "1", label: "Enabled" },
-    { value: "0", label: "Disabled" },
+  const validOption = [
+    { value: 1, label: "Enabled" },
+    { value: 0, label: "Disabled" },
   ];
+
+  const getOptionByValue = (value) => {
+    return validOption.find((option) => option.value === value) || null;
+  };
+
+  const getUserOptionValue = (value) => {
+    return userOptions.find((option) => option.value === value) || null;
+  };
 
   useEffect(() => {
     axios.post(`${SERVER_URL}/user/getAll`).then((res) => {
@@ -48,24 +56,18 @@ const UserDetailPage = () => {
             setMachineId(res.data.data[0].machine_id);
             setUserId(res.data.data[0].user_id);
             setType(res.data.data[0].is_valid);
+            setDefaultUserOption(getUserOptionValue(res.data.data[0].user_id));
+            setDefaultStatus(getOptionByValue(res.data.data[0].is_valid));
           } else {
-            // toast.error(res.data.message);
+            showToast("Error", "Something went wrong", "failure");
           }
         });
     }
-  }, [id]);
+  }, [id, userOptions]);
 
   const handleUpdate = async () => {
     if (machineId == "") {
-      toast.error("Please fill machine id!");
-      return;
-    }
-    if (userId == "") {
-      toast.error("Please select user id!");
-      return;
-    }
-    if (type == "") {
-      toast.error("Please select status!");
+      showToast("Error", "Please fill machine id!", "failure");
       return;
     }
 
@@ -78,27 +80,25 @@ const UserDetailPage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("Item has been updated successfully");
-          router.push("/machine");
+          showToast("Success", "Item has been updated successfully", "success");
         } else {
-          console.log("error");
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
 
   const handleChange = (e) => {
-    setType(e.target.value);
+    setType(e.value);
   };
 
   const handleUserChange = (e) => {
-    setUserId(e.target.value);
+    setUserId(e.value);
   };
 
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
       <PageHeading heading="Update User Machine" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -116,14 +116,12 @@ const UserDetailPage = () => {
                       Machine ID
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Machine ID"
-                        id="machine id"
-                        value={machineId}
                         required
                         onChange={(e) => setMachineId(e.target.value)}
+                        value={machineId}
                       />
                     </div>
                   </Row>
@@ -132,15 +130,13 @@ const UserDetailPage = () => {
                       User
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select User"
-                        id="user"
-                        value={userId}
+                      <CustomSelect
                         options={userOptions}
-                        onChange={(e) => {
-                          handleUserChange(e);
-                        }}
+                        placeHolder="Select user option"
+                        onChange={handleUserChange}
+                        className="border rounded"
+                        defaultValue={defaultUserOption}
+                        value={userId}
                       />
                     </Col>
                   </Row>
@@ -149,15 +145,13 @@ const UserDetailPage = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select status option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        defaultValue={defaultStatus}
                         value={type}
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
                       />
                     </Col>
                   </Row>
@@ -165,10 +159,13 @@ const UserDetailPage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleUpdate}>
                         Update
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>

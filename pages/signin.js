@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { SERVER_URL } from "config/constant";
 import { useAuth } from "provider/AuthContext";
+import { useToast } from "provider/ToastContext";
 import axios from "axios";
 
 const SignIn = () => {
@@ -15,6 +16,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,9 +26,14 @@ const SignIn = () => {
         if (res.data.success) {
           login(res.data.users[0]);
           router.push("/");
+          showToast("Success", "Login successfully", "success");
         } else {
-          toast.error("User does not exist or allowed. Please contact us");
+          showToast("Error", "Login failed", "failure");
         }
+      })
+      .catch((err) => {
+        console.log(err);
+        showToast("Error", err, "failure");
       });
   };
   return (
@@ -43,7 +50,7 @@ const SignIn = () => {
                     src="/images/logo.png"
                     className="mb-2"
                     alt=""
-                    style={{ width: "150px" }}
+                    width={150}
                   />
                 </Link>
               </div>
@@ -90,13 +97,13 @@ const SignIn = () => {
                     Sign In
                   </Button>
                 </div>
-                <div className="d-md-flex justify-content-between mt-4">
+                {/* <div className="d-md-flex justify-content-between mt-4">
                   <div className="mb-2 mb-md-0">
                     <Link href="/signup" className="fs-5">
                       Create An Account{" "}
                     </Link>
                   </div>
-                </div>
+                </div> */}
               </div>
             </Form>
           </Card.Body>

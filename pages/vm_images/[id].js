@@ -1,16 +1,14 @@
 import { Container } from "react-bootstrap";
-
 import { PageHeading } from "widgets";
-
 import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-
 import { FormSelect } from "widgets";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "provider/ToastContext";
+import CustomSelect from "components/CustomSelect";
+import CustomInput from "components/CustomInput";
 
 const UserDetailPage = () => {
   const [title, setTitle] = useState("");
@@ -19,24 +17,27 @@ const UserDetailPage = () => {
   const [description, setDescription] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [type, setType] = useState("");
+  const [defaultValue, setDefaultValue] = useState();
   const router = useRouter();
   const { id } = router.query;
+  const { showToast } = useToast();
 
-  const countryOptions = [
-    { value: "1", label: "Enabled" },
-    { value: "0", label: "Disabled" },
+  const validOption = [
+    { value: 1, label: "Enabled" },
+    { value: 0, label: "Disabled" },
   ];
 
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/vmimage/findById`, { id: id }).then((res) => {
         if (res.data.success) {
-          setTitle(res.data.data.title);
-          setPassword(res.data.data.password);
-          setConfirmPassword(res.data.data.password);
-          setDescription(res.data.data.description);
-          setDownloadUrl(res.data.data.download_url);
-          setType(res.data.data.is_valid);
+          setTitle(res.data.data[0].title);
+          setPassword(res.data.data[0].password);
+          setConfirmPassword(res.data.data[0].password);
+          setDescription(res.data.data[0].description);
+          setDownloadUrl(res.data.data[0].download_url);
+          setType(res.data.data[0].is_valid);
+          setDefaultValue(getOptionByValue(res.data.data[0].is_valid));
         } else {
           // toast.error(res.data.message);
         }
@@ -44,33 +45,37 @@ const UserDetailPage = () => {
     }
   }, [id]);
 
+  const getOptionByValue = (value) => {
+    return validOption.find((option) => option.value === value) || null;
+  };
+
   const handleUpdate = async () => {
     if (title == "") {
-      toast.error("Please fill title!");
+      showToast("Error", "Please fill title!", "failure");
       return;
     }
     if (password == "") {
-      toast.error("Please fill password!");
+      showToast("Error", "Please fill password!", "failure");
       return;
     }
     if (confirmPassword == "") {
-      toast.error("Please fill confirm password!");
+      showToast("Error", "Please fill confirm password!", "failure");
       return;
     }
     if (confirmPassword != password) {
-      toast.error("Password and confirm password should be same!");
-      return;
-    }
-    if (downloadUrl == "") {
-      toast.error("Please fill download URL!");
+      showToast(
+        "Error",
+        "Password and confirm password should be same!",
+        "failure"
+      );
       return;
     }
     if (description == "") {
-      toast.error("Please fill title!");
+      showToast("Error", "Please fill description!", "failure");
       return;
     }
-    if (type == "") {
-      toast.error("Please select status!");
+    if (downloadUrl == "") {
+      showToast("Error", "Please fill download url!", "failure");
       return;
     }
 
@@ -85,10 +90,10 @@ const UserDetailPage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          toast.success("VM image has been updated successfully");
+          showToast("Success", "VM Image has been updated.", "success");
           router.push("/vm_images");
         } else {
-          console.log("error");
+          showToast("Error", "Something went wrong", "failure");
         }
       });
   };
@@ -101,7 +106,6 @@ const UserDetailPage = () => {
     <Container fluid className="p-6">
       {/* Page Heading */}
       <PageHeading heading="Update VM Image" />
-      <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -109,104 +113,93 @@ const UserDetailPage = () => {
             <Card.Body>
               <div>
                 <Form>
-                  {/* row */}
                   <Row className="mb-3">
                     <label
-                      htmlFor="fullName"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Title
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Title"
-                        id="Title"
-                        value={title}
                         required
                         onChange={(e) => setTitle(e.target.value)}
+                        value={title}
                       />
                     </div>
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="Password"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Password
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="password"
-                        className="form-control"
                         placeholder="Password"
-                        id="Password"
-                        value={password}
                         required
                         onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                       />
                     </div>
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="ConfirmPassword"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Confirm Password
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="password"
-                        className="form-control"
                         placeholder="Confirm Password"
-                        id="ConfirmPassword"
-                        value={confirmPassword}
                         required
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        value={confirmPassword}
                       />
                     </div>
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="description"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Description
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <textarea
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Description"
-                        id="description"
-                        value={description}
                         required
                         onChange={(e) => setDescription(e.target.value)}
+                        value={description}
                       />
                     </div>
                   </Row>
                   <Row className="mb-3">
                     <label
-                      htmlFor="fullName"
+                      htmlFor="email"
                       className="col-sm-4 col-form-label
                     form-label"
                     >
                       Download URL
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
-                      <input
+                      <CustomInput
                         type="text"
-                        className="form-control"
                         placeholder="Download URL"
-                        id="download-url"
-                        value={downloadUrl}
                         required
                         onChange={(e) => setDownloadUrl(e.target.value)}
+                        value={downloadUrl}
                       />
                     </div>
                   </Row>
@@ -215,15 +208,12 @@ const UserDetailPage = () => {
                       Status
                     </Form.Label>
                     <Col md={4} xs={4}>
-                      <Form.Control
-                        as={FormSelect}
-                        placeholder="Select Status"
-                        id="country"
-                        value={type}
-                        options={countryOptions}
-                        onChange={(e) => {
-                          handleChange(e);
-                        }}
+                      <CustomSelect
+                        options={validOption}
+                        placeHolder="Select valid option"
+                        onChange={handleChange}
+                        className="border rounded"
+                        defaultValue={defaultValue}
                       />
                     </Col>
                   </Row>
@@ -231,10 +221,13 @@ const UserDetailPage = () => {
                     <Col
                       md={{ offset: 4, span: 8 }}
                       xs={8}
-                      className="mt-4 d-flex justify-content-end "
+                      className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleUpdate}>
                         Update
+                      </Button>
+                      <Button variant="danger" onClick={() => router.back()}>
+                        Back
                       </Button>
                     </Col>
                   </Row>
