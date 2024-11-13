@@ -14,10 +14,11 @@ import NotificationList from "data/Notification";
 
 // import hooks
 import useMounted from "hooks/useMounted";
+import { useRouter } from "next/router";
 
 const QuickMenu = () => {
   const hasMounted = useMounted();
-
+  const router = useRouter();
   const isDesktop = useMediaQuery({
     query: "(min-width: 1224px)",
   });
@@ -53,6 +54,11 @@ const QuickMenu = () => {
   const handleSignOut = () => {
     logout();
   };
+
+  const handleGoChangePasswordPage = () => {
+    router.push("/changePassword");
+  };
+
   const QuickMenuDesktop = () => {
     return (
       <ListGroup
@@ -85,11 +91,14 @@ const QuickMenu = () => {
               <div className="lh-1 ">
                 <h5 className="mb-1">
                   {" "}
-                  {userInfo != null ? userInfo.name : ""}
+                  {userInfo != null ? userInfo.email : ""}
                 </h5>
                 {/* <Link href="#" className="text-inherit fs-6">View my profile</Link> */}
               </div>
               <div className=" dropdown-divider mt-3 mb-2"></div>
+            </Dropdown.Item>
+            <Dropdown.Item onClick={handleGoChangePasswordPage}>
+              <i className="fe fe-settings me-2"></i> Change Password
             </Dropdown.Item>
             {/* <Dropdown.Item eventKey="2">
                         <i className="fe fe-user me-2"></i> Edit Profile

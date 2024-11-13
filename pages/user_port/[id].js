@@ -39,9 +39,9 @@ const UserPortDetail = () => {
       }
     });
     axios.post(`${SERVER_URL}/port/getAll`).then((res) => {
-      if (res.data.success) {
+      if (res.data.status == 200) {
         let ports = [];
-        res.data.data.map((port) => {
+        res.data.data.data.map((port) => {
           ports.push({ value: port.id, label: port.title });
         });
         setPortOptions(ports);
@@ -67,15 +67,15 @@ const UserPortDetail = () => {
 
   const handleUpdate = async () => {
     if (portMapId == "") {
-      toast.error("Please select port id!");
+      toast.error("Please select port!");
       return;
     }
     if (userId == "") {
-      toast.error("Please select user id!");
+      toast.error("Please select user!");
       return;
     }
     if (type == "") {
-      toast.error("Please select type!");
+      toast.error("Please select status!");
       return;
     }
 
@@ -128,7 +128,7 @@ const UserPortDetail = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select User"
                         id="country"
                         value={userId}
                         options={userOptions}
@@ -145,7 +145,7 @@ const UserPortDetail = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Port"
                         id="country"
                         value={portMapId}
                         options={portOptions}
@@ -157,12 +157,12 @@ const UserPortDetail = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Status"
                         id="country"
                         value={type}
                         options={countryOptions}

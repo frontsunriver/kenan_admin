@@ -5,6 +5,7 @@ import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
+import { formatFileSize } from "utils/utility";
 import "react-toastify/dist/ReactToastify.css";
 
 const VMImageManagementPage = () => {
@@ -32,6 +33,14 @@ const VMImageManagementPage = () => {
     {
       name: "Download URL",
       selector: (row) => row.download_url,
+      grow: 1,
+      sortable: true,
+    },
+    {
+      name: "Size",
+      selector: (row) => {
+        return formatFileSize(row.size);
+      },
       grow: 1,
       sortable: true,
     },

@@ -50,7 +50,7 @@ const UserPortCreatePage = () => {
 
   const handleCreate = async () => {
     if (vmId == "") {
-      toast.error("Please select vm!");
+      toast.error("Please select vm image!");
       return;
     }
     if (userId == "") {
@@ -58,7 +58,7 @@ const UserPortCreatePage = () => {
       return;
     }
     if (type == "") {
-      toast.error("Please select type!");
+      toast.error("Please select status!");
       return;
     }
 
@@ -107,7 +107,7 @@ const UserPortCreatePage = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select User"
                         id="user"
                         options={userOption}
                         onChange={(e) => {
@@ -123,7 +123,7 @@ const UserPortCreatePage = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Port"
+                        placeholder="Select VM Image"
                         id="port"
                         options={portOption}
                         onChange={(e) => {
@@ -134,12 +134,12 @@ const UserPortCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Status"
                         id="country"
                         options={countryOptions}
                         onChange={(e) => {

@@ -32,9 +32,9 @@ const UserPortCreatePage = () => {
       }
     });
     axios.post(`${SERVER_URL}/port/getAll`).then((res) => {
-      if (res.data.success) {
+      if (res.data.status == 200) {
         let ports = [];
-        res.data.data.map((port) => {
+        res.data.data.data.map((port) => {
           ports.push({ value: port.id, label: port.title });
         });
         setPortOption(ports);
@@ -59,7 +59,7 @@ const UserPortCreatePage = () => {
       return;
     }
     if (type == "") {
-      toast.error("Please select type!");
+      toast.error("Please select status!");
       return;
     }
 
@@ -108,7 +108,7 @@ const UserPortCreatePage = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select User"
                         id="user"
                         options={userOption}
                         onChange={(e) => {
@@ -135,12 +135,12 @@ const UserPortCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Status"
                         id="country"
                         options={countryOptions}
                         onChange={(e) => {

@@ -79,7 +79,7 @@ const AdminManagementDetailPage = () => {
 
   return (
     <Container fluid className="p-6">
-      <PageHeading heading="Update Super Admin" />
+      <PageHeading heading="Update Admin User" />
       <ToastContainer />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>

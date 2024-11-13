@@ -127,7 +127,7 @@ const UserManagementPage = () => {
                   {machine.length}
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
-                  User Machine
+                  User Machines
                 </Card.Text>
               </Card.Body>
               <Card.Footer>

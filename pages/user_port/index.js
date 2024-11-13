@@ -103,7 +103,6 @@ const UserMachineManagementPage = () => {
   const getData = () => {
     axios.post(`${SERVER_URL}/userPort/getAll`).then((res) => {
       if (res.data.success) {
-        console.log(res.data.data);
         setData(res.data.data);
       } else {
         console.log("error");

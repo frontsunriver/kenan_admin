@@ -171,7 +171,7 @@ const PortCreatePage = () => {
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Https Type"
                         id="country"
                         options={httpsOption}
                         onChange={(e) => {
@@ -182,12 +182,12 @@ const PortCreatePage = () => {
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">
-                      Type
+                      Status
                     </Form.Label>
                     <Col md={4} xs={4}>
                       <Form.Control
                         as={FormSelect}
-                        placeholder="Select Type"
+                        placeholder="Select Status"
                         id="country"
                         options={countryOptions}
                         onChange={(e) => {

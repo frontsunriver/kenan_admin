@@ -109,7 +109,7 @@ const UserManagementPage = () => {
       <Row>
         <Col lg={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
-            <h1 className="mb-1 h2 fw-bold">User Management</h1>
+            <h1 className="mb-1 h2 fw-bold">User VM Image Management</h1>
             <Button variant="primary" onClick={handleUpdate}>
               Update
             </Button>

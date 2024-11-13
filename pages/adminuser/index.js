@@ -23,12 +23,6 @@ const AdminManagementPage = () => {
 
   const columns = [
     {
-      name: "Name",
-      selector: (row) => row.name,
-      sortable: true,
-      grow: 2,
-    },
-    {
       name: "Email",
       selector: (row) => row.email,
       grow: 4,
@@ -55,7 +49,7 @@ const AdminManagementPage = () => {
       selector: (row) => {
         return (
           <div className="flex items-center">
-            <Button
+            {/* <Button
               variant="primary"
               className="me-1"
               onClick={() => {
@@ -63,7 +57,7 @@ const AdminManagementPage = () => {
               }}
             >
               <i className={`nav-icon fe fe-edit`}></i>
-            </Button>
+            </Button> */}
             <Button
               variant="primary"
               className="me-1"
@@ -133,7 +127,7 @@ const AdminManagementPage = () => {
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
-              <h1 className="mb-1 h2 fw-bold">Super Admin Management</h1>
+              <h1 className="mb-1 h2 fw-bold">Admin Management</h1>
               {/* <p className="mb-0 ">
                 Documentation and examples for opt-in styling of tables (given
                 their prevalent use in JavaScript plugins) with Bootstrap.
