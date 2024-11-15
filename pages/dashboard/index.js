@@ -181,7 +181,7 @@ const UserManagementPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {loginCount ? loginCount[0].login_count : 0}
+                  {loginCount.length > 0 && loginCount[0] ? loginCount[0].login_count : 0}
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   Login Count
