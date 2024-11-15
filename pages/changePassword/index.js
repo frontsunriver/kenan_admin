@@ -49,7 +49,7 @@ const UserDetailPage = () => {
       return;
     }
     if (confirmPassword != newPassword) {
-      toast.error("new and old password does not match!");
+      toast.error("new and old password shoud be matched!");
       return;
     }
 

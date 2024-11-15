@@ -171,6 +171,26 @@ const UserManagementPage = () => {
             >
               <i className={`nav-icon fe fe-settings`}></i>
             </div>
+            <div
+              style={{
+                background: "#e2e2e2",
+                borderRadius: "50%",
+                width: "35px",
+                height: "35px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                color: "white",
+              }}
+              className="me-1 p-2 bg-info"
+              onClick={() => {
+                handleResetPassword(row.id);
+              }}
+              title="Reset Password"
+            >
+              <i className={`nav-icon fe fe-lock`}></i>
+            </div>
           </div>
         );
       },
@@ -207,10 +227,20 @@ const UserManagementPage = () => {
       });
   };
 
+  const handleResetPassword = (id) => {
+    axios.post(`${SERVER_URL}/user/resetPassword`, { id: id }).then((res) => {
+      if (res.data.success) {
+        showToast("Success", "Password has been updated successfully with 123456!", "success");
+      } else {
+        showToast("Error", "Something went wrong!", "failure");
+      }
+    });
+  }
+
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/user/remove`, { id: id }).then((res) => {
       if (res.data.success) {
-        getData();
+        getData(keyword, flag);
         showToast("Success", "User has been deleted successfully!", "success");
       } else {
         showToast("Error", "Something went wrong!", "failure");
@@ -279,7 +309,7 @@ const UserManagementPage = () => {
                     placeHolder="Select valid option"
                     onChange={handleValidOption}
                     className="border rounded"
-                    // defaultValue={defaultSelected}
+                  // defaultValue={defaultSelected}
                   />
                 </div>
                 <Button variant="primary" onClick={handleCreate}>

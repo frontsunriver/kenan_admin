@@ -62,7 +62,7 @@ const ExpireSessionPage = () => {
                       className="col-sm-4 col-form-label
                     form-label"
                     >
-                      Session Time
+                      Session Time(seconds)
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
                       <CustomInput

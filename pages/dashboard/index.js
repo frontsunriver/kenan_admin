@@ -20,6 +20,7 @@ const UserManagementPage = () => {
       .post(`${SERVER_URL}/admin/findById`, { id: userInfo.id })
       .then((res) => {
         if (res.data.success) {
+          console.log(res.data);
           setLoginCount(res.data.data);
         } else {
           console.log("error");
@@ -180,7 +181,7 @@ const UserManagementPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {loginCount ? loginCount.login_count : 0}
+                  {loginCount ? loginCount[0].login_count : 0}
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   Login Count

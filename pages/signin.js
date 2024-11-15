@@ -28,7 +28,7 @@ const SignIn = () => {
           router.push("/");
           showToast("Success", "Login successfully", "success");
         } else {
-          showToast("Error", "Login failed", "failure");
+          showToast("Error", "User account or password is wrong.", "failure");
         }
       })
       .catch((err) => {
