@@ -72,7 +72,7 @@ const UserPortCreatePage = () => {
         if (res.data.success) {
           showToast("Success", "Item has been created", "success");
         } else {
-          showToast("Error", "Something went wrong", "failure");
+          showToast("Error", res.data.message, "failure");
         }
       });
   };

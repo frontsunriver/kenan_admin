@@ -73,7 +73,7 @@ const UserPortCreatePage = () => {
         if (res.data.success) {
           showToast("Success", "Item has been created", "success");
         } else {
-          showToast("Error", "Something went wrong", "failure");
+          showToast("Error", res.data.message, "failure");
         }
       });
   };
@@ -135,7 +135,7 @@ const UserPortCreatePage = () => {
                         placeHolder="Select Status"
                         onChange={handleChange}
                         className="border rounded"
-                        // defaultValue={defaultSelected}
+                      // defaultValue={defaultSelected}
                       />
                     </Col>
                   </Row>
