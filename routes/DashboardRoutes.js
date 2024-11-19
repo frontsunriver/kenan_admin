@@ -1,29 +1,6 @@
 import { v4 as uuid } from "uuid";
-/**
- *  All Dashboard Routes
- *
- *  Understanding name/value pairs for Dashboard routes
- *
- *  Applicable for main/root/level 1 routes
- *  icon 		: String - It's only for main menu or you can consider 1st level menu item to specify icon name.
- *
- *  Applicable for main/root/level 1 and subitems routes
- * 	id 			: Number - You can use uuid() as value to generate unique ID using uuid library, you can also assign constant unique ID for react dynamic objects.
- *  title 		: String - If menu contains childern use title to provide main menu name.
- *  badge 		: String - (Optional - Default - '') If you specify badge value it will be displayed beside the menu title or menu item.
- * 	badgecolor 	: String - (Optional - Default - 'primary' ) - Used to specify badge background color.
- *
- *  Applicable for subitems / children items routes
- *  name 		: String - If it's menu item in which you are specifiying link, use name ( don't use title for that )
- *  children	: Array - Use to specify submenu items
- *
- *  Used to segrigate menu groups
- *  grouptitle : Boolean - (Optional - Default - false ) If you want to group menu items you can use grouptitle = true,
- *  ( Use title : value to specify group title  e.g. COMPONENTS , DOCUMENTATION that we did here. )
- *
- */
 
-export const DashboardMenu = [
+export const MenuArray = [
   {
     id: uuid(),
     title: "Home",
@@ -216,5 +193,28 @@ export const DashboardMenu = [
   // 	link: '/changelog'
   // },
 ];
+
+const rolesArray = () => {
+  const cookies = document.cookie.split("; ");
+  let userData = null;
+  const cookie = cookies.find((row) => row.startsWith("X-Local-Storage-Data="));
+  if (cookie && cookie != "") {
+    userData = cookie.split("=")[1];
+  }
+  if (userData != "''" && userData != null) {
+    const userInfo = JSON.parse(userData);
+    return userInfo["roles"];
+  } else {
+    return [];
+  }
+};
+
+// Get all the unique URLs from rolesArray
+const roleUrls = new Set(rolesArray().map((role) => role.url));
+
+// Filter the DashboardMenu based on role URLs
+export const DashboardMenu = MenuArray.filter((item) =>
+  roleUrls.has(item.link)
+);
 
 export default DashboardMenu;

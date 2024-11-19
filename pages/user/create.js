@@ -32,7 +32,6 @@ const UserCreatePage = () => {
 
     await axios
       .post(`${SERVER_URL}/user/create`, {
-        name: name,
         email: email,
         is_valid: type,
       })

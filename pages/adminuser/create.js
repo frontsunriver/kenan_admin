@@ -1,81 +1,65 @@
 import { Container } from "react-bootstrap";
 import { PageHeading } from "widgets";
-import { Col, Row, Form, Card, Button, Image } from "react-bootstrap";
-import DataTable from "react-data-table-component";
-import { useState, useEffect } from "react";
+import { Col, Row, Form, Card, Button } from "react-bootstrap";
+import CustomSelect from "components/CustomSelect";
+import { useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
-import CustomSelect from "components/CustomSelect";
 import CustomInput from "components/CustomInput";
-import ExpandComponent from "components/ExpandComponent";
 
-const totalSelectedItems = [];
-const AdminUserDetailPage = () => {
-  const [data, setData] = useState([]);
-  const [email, setEmail] = useState("");
-  const [type, setType] = useState("");
-  const [defaultValue, setDefaultValue] = useState();
+const UserCreatePage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [type, setType] = useState("");
   const { showToast } = useToast();
 
   const validOption = [
-    { value: 1, label: "Enabled" },
-    { value: 0, label: "Disabled" },
+    { value: "1", label: "Enabled" },
+    { value: "0", label: "Disabled" },
   ];
 
-  const columns = [
-    {
-      name: "Name",
-      selector: (row) => row.name,
-      grow: 4,
-      sortable: true,
-    },
-  ];
-
-  useEffect(() => {
-    if (id !== undefined) {
-      axios.post(`${SERVER_URL}/admin/findById`, { id: id }).then((res) => {
-        if (res.data.success) {
-          setEmail(res.data.data[0].email);
-          setDefaultValue(getOptionByValue(res.data.data[0].is_valid));
-          setType(res.data.data[0].is_valid);
-          axios.post(`${SERVER_URL}/adminRole/findRoot`).then((res) => {
-            if (res.data.success) {
-              setData(res.data.data);
-            }
-          });
-        } else {
-          showToast("Error", "Something went wrong", "failure");
-        }
-      });
-    }
-  }, [id]);
-
-  const getOptionByValue = (value) => {
-    return validOption.find((option) => option.value === value) || null;
-  };
-
-  const handleUpdate = async () => {
+  const handleCreate = async () => {
     if (email == "") {
       showToast("Error", "Please fill email!", "failure");
       return;
     }
+    if (password == "") {
+      showToast("Error", "Please fill password!", "failure");
+      return;
+    }
+    if (confirmPassword == "") {
+      showToast("Error", "Please fill confirm password!", "failure");
+      return;
+    }
+    if (password != confirmPassword) {
+      showToast(
+        "Error",
+        "Password should be matched with confirm password",
+        "failure"
+      );
+      return;
+    }
+    if (type == "") {
+      showToast("Error", "Please select status!", "failure");
+      return;
+    }
 
     await axios
-      .post(`${SERVER_URL}/admin/update`, {
-        id: id,
+      .post(`${SERVER_URL}/admin/create`, {
         email: email,
+        password: password,
         is_valid: type,
       })
       .then((res) => {
         if (res.data.success) {
-          showToast("Success", "User has been updated.", "success");
+          showToast("Success", "Admin user has been created.", "success");
           router.push("/adminuser");
         } else {
-          showToast("Error", "Something went wrong", "failure");
+          showToast("Error", res.data.message, "failure");
         }
       });
   };
@@ -84,20 +68,9 @@ const AdminUserDetailPage = () => {
     setType(e.value);
   };
 
-  const ExpandedComponent = ({ data }) => {
-    return (
-      <ExpandComponent
-        data={data}
-        totalSelectedItems={totalSelectedItems}
-        id={id}
-      />
-    );
-  };
-
   return (
     <Container fluid className="p-6">
-      {/* Page Heading */}
-      <PageHeading heading="Update administrator" />
+      <PageHeading heading="Create Administrator" />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -119,7 +92,40 @@ const AdminUserDetailPage = () => {
                         placeholder="Email"
                         required
                         onChange={(e) => setEmail(e.target.value)}
-                        value={email}
+                      />
+                    </div>
+                  </Row>
+                  <Row className="mb-3">
+                    <label
+                      htmlFor="password"
+                      className="col-sm-4 col-form-label
+                    form-label"
+                    >
+                      Password
+                    </label>
+                    <div className="col-sm-4 mb-3 mb-lg-0">
+                      <CustomInput
+                        type="password"
+                        placeholder="Password"
+                        required
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                  </Row>
+                  <Row className="mb-3">
+                    <label
+                      htmlFor="confirmPassword"
+                      className="col-sm-4 col-form-label
+                    form-label"
+                    >
+                      Confirm Password
+                    </label>
+                    <div className="col-sm-4 mb-3 mb-lg-0">
+                      <CustomInput
+                        type="password"
+                        placeholder="Confirm Password"
+                        required
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                       />
                     </div>
                   </Row>
@@ -133,18 +139,8 @@ const AdminUserDetailPage = () => {
                         placeHolder="Select valid option"
                         onChange={handleChange}
                         className="border rounded"
-                        defaultValue={defaultValue}
-                        value={type}
                       />
                     </Col>
-                  </Row>
-                  <Row>
-                    <DataTable
-                      columns={columns}
-                      data={data}
-                      expandableRows
-                      expandableRowsComponent={ExpandedComponent}
-                    />
                   </Row>
                   <Row className="align-items-center">
                     <Col
@@ -152,8 +148,8 @@ const AdminUserDetailPage = () => {
                       xs={8}
                       className="mt-4 d-flex justify-content-end gap-2"
                     >
-                      <Button variant="primary" onClick={handleUpdate}>
-                        Update
+                      <Button variant="primary" onClick={handleCreate}>
+                        Create
                       </Button>
                       <Button variant="danger" onClick={() => router.back()}>
                         Back
@@ -170,4 +166,4 @@ const AdminUserDetailPage = () => {
   );
 };
 
-export default AdminUserDetailPage;
+export default UserCreatePage;

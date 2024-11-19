@@ -66,9 +66,7 @@ const UserManagementPage = () => {
     selectedRecord = [];
     try {
       const response = await axios.post(`${SERVER_URL}/port/getAll`);
-      console.log(response.data.status);
       if (response.data.status == 200) {
-        console.log(response.data.data);
         setData(response.data.data.data);
         const res = await axios.post(`${SERVER_URL}/userPort/findByUserId`, {
           user_id: id,
@@ -102,7 +100,6 @@ const UserManagementPage = () => {
 
   const handleChange = (e) => {
     selectedRecord = [];
-    console.log(e.selectedRows);
     selectedRecord = e.selectedRows;
   };
 

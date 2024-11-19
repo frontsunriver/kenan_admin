@@ -36,7 +36,6 @@ const PortDetailPage = () => {
   useEffect(() => {
     if (id !== undefined) {
       axios.post(`${SERVER_URL}/port/findById`, { id: id }).then((res) => {
-        console.log(res.data);
         if (res.data.status == 200) {
           setTitle(res.data.data.data[0].title);
           setListenPort(res.data.data.data[0].listen_port);

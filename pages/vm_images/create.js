@@ -70,7 +70,7 @@ const VMImageCreatePage = () => {
       })
       .then((res) => {
         if (res.data.success) {
-          showToast("Success", "Item has been created.", "success");
+          showToast("Success", "Item has been registered.", "success");
         } else {
           showToast("Error", res.data.message, "failure");
         }
@@ -83,7 +83,7 @@ const VMImageCreatePage = () => {
 
   return (
     <Container fluid className="p-6">
-      <PageHeading heading="Create VM Image" />
+      <PageHeading heading="Register VM Image" />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>
@@ -198,7 +198,7 @@ const VMImageCreatePage = () => {
                       className="mt-4 d-flex justify-content-end gap-2"
                     >
                       <Button variant="primary" onClick={handleCreate}>
-                        Create
+                        Register
                       </Button>
                       <Button variant="danger" onClick={() => router.back()}>
                         Back

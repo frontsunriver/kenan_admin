@@ -1,5 +1,5 @@
 // import node module libraries
-import { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
@@ -12,16 +12,111 @@ import {
   useAccordionButton,
   AccordionContext,
 } from "react-bootstrap";
+import { v4 as uuid } from "uuid";
 
 // import simple bar scrolling used for notification item scrolling
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 
-// import routes file
-import { DashboardMenu } from "routes/DashboardRoutes";
-
 const NavbarVertical = (props) => {
+  const [dashboardMenu, setDashboardMenu] = useState([]);
   const location = useRouter();
+  const HomeArray = [
+    {
+      id: uuid(),
+      title: "Home",
+      icon: "home",
+      link: "/",
+    },
+    {
+      id: uuid(),
+      title: "Dashboard",
+      icon: "activity",
+      link: "/dashboard",
+    },
+  ];
+  const MenuArray = [
+    {
+      id: uuid(),
+      title: "Users",
+      icon: "users",
+      link: "/user",
+    },
+    {
+      id: uuid(),
+      title: "Ports",
+      icon: "shield",
+      link: "/port",
+    },
+    {
+      id: uuid(),
+      title: "User Ports",
+      icon: "command",
+      link: "/user_port",
+    },
+    {
+      id: uuid(),
+      title: "VM Images",
+      icon: "layers",
+      link: "/vm_images",
+    },
+    {
+      id: uuid(),
+      title: "User VM Images",
+      icon: "command",
+      link: "/user_vm",
+    },
+    {
+      id: uuid(),
+      title: "User Machines",
+      icon: "monitor",
+      link: "/machine",
+    },
+    {
+      id: uuid(),
+      title: "User Sessions",
+      icon: "book-open",
+      link: "/user_session",
+    },
+    {
+      id: uuid(),
+      title: "Administrators",
+      icon: "user",
+      link: "/adminuser",
+    },
+    {
+      id: uuid(),
+      title: "Configuration",
+      icon: "settings",
+      link: "/session",
+    },
+    {
+      id: uuid(),
+      title: "Logs",
+      icon: "calendar",
+      link: "/logs",
+    },
+  ];
+
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    let userData = null;
+    const cookie = cookies.find((row) =>
+      row.startsWith("X-Local-Storage-Data=")
+    );
+    if (cookie && cookie != "") {
+      userData = cookie.split("=")[1];
+    }
+    if (userData != "''" && userData != null) {
+      const userInfo = JSON.parse(userData);
+      const roleArray = userInfo["roles"];
+      const roleUrls = new Set(roleArray.map((role) => role.url));
+      const menuArray = MenuArray.filter((item) => roleUrls.has(item.link));
+      const combineArray = [...HomeArray, ...menuArray];
+      setDashboardMenu(combineArray);
+    } else {
+    }
+  }, []);
 
   const CustomToggle = ({ children, eventKey, icon }) => {
     const { activeEventKey } = useContext(AccordionContext);
@@ -66,7 +161,6 @@ const NavbarVertical = (props) => {
       </Link>
     );
   };
-
   const generateLink = (item) => {
     return (
       <Link
@@ -104,13 +198,12 @@ const NavbarVertical = (props) => {
             <Image src="/images/logo.png" alt="" />
           </Link>
         </div>
-        {/* Dashboard Menu */}
         <Accordion
           defaultActiveKey="0"
           as="ul"
           className="navbar-nav flex-column"
         >
-          {DashboardMenu.map(function (menu, index) {
+          {dashboardMenu.map(function (menu, index) {
             if (menu.grouptitle) {
               return (
                 <Card bsPrefix="nav-item" key={index}>
@@ -327,7 +420,6 @@ const NavbarVertical = (props) => {
                         ""
                       )}
                     </Link>
-                    {/* end of menu item without any childern items */}
                   </Card>
                 );
               }

@@ -5,24 +5,21 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { formatTimestamp } from "utils/utility";
 
 const AdminManagementPage = () => {
   const [data, setData] = useState([]);
-  const [type, setType] = useState("");
   const router = useRouter();
 
   const columns = [
     {
       name: "Object Type",
       selector: (row) => {
-        return row.object_type == 0 ? (
+        return row.user_type == 0 ? (
           <Badge pill bg="primary" className="me-1">
             User
           </Badge>
-        ) : row.object_type == 1 ? (
+        ) : row.user_type == 1 ? (
           <Badge pill bg="success" className="me-1">
             Admin
           </Badge>
@@ -36,8 +33,14 @@ const AdminManagementPage = () => {
       grow: 1,
     },
     {
-      name: "Object Id",
-      selector: (row) => row.object_id,
+      name: "User Id",
+      selector: (row) => row.user_id,
+      grow: 1,
+      sortable: true,
+    },
+    {
+      name: "User Email",
+      selector: (row) => row.user_email,
       grow: 1,
       sortable: true,
     },
@@ -67,39 +70,7 @@ const AdminManagementPage = () => {
       grow: 1,
       sortable: true,
     },
-    // {
-    //   name: "Action",
-    //   selector: (row) => {
-    //     return (
-    //       <div className="flex items-center">
-    //         <Button
-    //           variant="primary"
-    //           className="me-1"
-    //           onClick={() => {
-    //             handleShowModal(row.id);
-    //           }}
-    //         >
-    //           <i className={`nav-icon fe fe-edit`}></i>
-    //         </Button>
-    //         <Button
-    //           variant="primary"
-    //           className="me-1"
-    //           onClick={() => {
-    //             handleDelete(row.id);
-    //           }}
-    //         >
-    //           <i className={`nav-icon fe fe-trash`}></i>
-    //         </Button>
-    //       </div>
-    //     );
-    //   },
-    //   grow: 2,
-    // },
   ];
-
-  const handleShowModal = (id) => {
-    router.push(`/logs/${id}`);
-  };
 
   const customStyles = {
     rows: {
@@ -124,24 +95,8 @@ const AdminManagementPage = () => {
     });
   };
 
-  const handleGoCreate = () => {
-    router.push("/logs/create");
-  };
-
-  const handleDelete = (id) => {
-    axios.post(`${SERVER_URL}/logs/remove`, { id: id }).then((res) => {
-      if (res.data.success) {
-        getData();
-        toast.success("Item has been deleted successfully");
-      } else {
-        console.log("error");
-      }
-    });
-  };
-
   return (
     <Container fluid className="p-6">
-      <ToastContainer />
       <Row>
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">

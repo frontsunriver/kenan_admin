@@ -9,7 +9,11 @@ import CustomCheckbox from "components/CustomCheckbox";
 
 const UserManagementPage = () => {
   const [data, setData] = useState([]);
-  const [copyVM, setCopyVM] = useState(false);
+  const [copyTextToVm, setCopyTextToVm] = useState(false);
+  const [copyTextFromVm, setCopyTextFromVm] = useState(false);
+  const [copyFileToVm, setCopyFileToVm] = useState(false);
+  const [copyFileFromVm, setCopyFileFromVm] = useState(false);
+  const [allowScreenshot, setAllowScreenshot] = useState(false);
   const [outBound, setOutBound] = useState(false);
   const { showToast } = useToast();
   const router = useRouter();
@@ -23,7 +27,17 @@ const UserManagementPage = () => {
       if (res.data.success) {
         if (res.data.data.length > 0) {
           setData(res.data.data);
-          setCopyVM(res.data.data[0].copy_to_vm == 1 ? true : false);
+          setCopyTextToVm(res.data.data[0].copy_text_to_vm == 1 ? true : false);
+          setCopyTextFromVm(
+            res.data.data[0].copy_text_from_vm == 1 ? true : false
+          );
+          setCopyFileToVm(res.data.data[0].copy_file_to_vm == 1 ? true : false);
+          setCopyFileFromVm(
+            res.data.data[0].copy_file_from_vm == 1 ? true : false
+          );
+          setAllowScreenshot(
+            res.data.data[0].allow_screenshot == 1 ? true : false
+          );
           setOutBound(res.data.data[0].enable_outbound == 1 ? true : false);
         }
       } else {
@@ -44,7 +58,11 @@ const UserManagementPage = () => {
     await axios
       .post(`${SERVER_URL}/userConfig/update`, {
         id: id,
-        copy_to_vm: copyVM ? 1 : 0,
+        copy_file_to_vm: copyFileToVm ? 1 : 0,
+        copy_file_from_vm: copyFileFromVm ? 1 : 0,
+        copy_text_to_vm: copyTextToVm,
+        copy_text_from_vm: copyTextFromVm,
+        allow_screenshot: allowScreenshot,
         enable_outbound: outBound ? 1 : 0,
       })
       .then((res) => {
@@ -61,8 +79,24 @@ const UserManagementPage = () => {
       });
   };
 
-  const handleCopyVMChange = () => {
-    setCopyVM(!copyVM);
+  const handleCopyTextToVM = () => {
+    setCopyTextToVm(!copyTextToVm);
+  };
+
+  const handleCopyTextFromVM = () => {
+    setCopyTextFromVm(!copyTextFromVm);
+  };
+
+  const handleCopyFileFromVM = () => {
+    setCopyFileFromVm(!copyFileFromVm);
+  };
+
+  const handleCopyFileToVM = () => {
+    setCopyFileToVm(!copyFileToVm);
+  };
+
+  const handleAllowScreenshot = () => {
+    setAllowScreenshot(!allowScreenshot);
   };
 
   const handleOutBoundChange = () => {
@@ -92,9 +126,29 @@ const UserManagementPage = () => {
               </Card.Body>
               <Card.Body className="p-3 d-flex gap-5">
                 <CustomCheckbox
-                  checked={copyVM}
-                  label="Copy To VM"
-                  onChange={handleCopyVMChange}
+                  checked={copyTextToVm}
+                  label="Copy Text To VM"
+                  onChange={handleCopyTextToVM}
+                />
+                <CustomCheckbox
+                  checked={copyTextFromVm}
+                  label="Copy Text From VM"
+                  onChange={handleCopyTextFromVM}
+                />
+                <CustomCheckbox
+                  checked={copyFileToVm}
+                  label="Copy File To VM"
+                  onChange={handleCopyFileToVM}
+                />
+                <CustomCheckbox
+                  checked={copyFileFromVm}
+                  label="Copy File From VM"
+                  onChange={handleCopyFileFromVM}
+                />
+                <CustomCheckbox
+                  checked={allowScreenshot}
+                  label="Allow Screenshot"
+                  onChange={handleAllowScreenshot}
                 />
                 <CustomCheckbox
                   checked={outBound}

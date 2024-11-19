@@ -7,9 +7,11 @@ import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
 import CustomSelect from "components/CustomSelect";
 import SearchBox from "components/Search";
-import { formatTimestamp } from "utils/utility";
+import { formatTimestamp, checkUrlExists } from "utils/utility";
+import { useAuth } from "provider/AuthContext";
 
 const UserManagementPage = () => {
+  const { userInfo } = useAuth();
   const { showToast } = useToast();
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState("");
@@ -23,7 +25,7 @@ const UserManagementPage = () => {
 
   const columns = [
     {
-      name: "email",
+      name: "Email",
       selector: (row) => row.email,
       grow: 1,
       sortable: true,
@@ -63,7 +65,6 @@ const UserManagementPage = () => {
           </Badge>
         );
       },
-      sortable: true,
       grow: 1,
     },
     {
@@ -71,126 +72,150 @@ const UserManagementPage = () => {
       selector: (row) => {
         return (
           <div className="d-flex items-center">
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-success"
-              onClick={() => {
-                handleGoDetail(row.id);
-              }}
-              title="Edit"
-            >
-              <i className={`nav-icon fe fe-edit`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-danger"
-              onClick={() => {
-                handleDelete(row.id);
-              }}
-              title="Delete"
-            >
-              <i className={`nav-icon fe fe-trash`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-info"
-              onClick={() => {
-                handleGoVm(row.id);
-              }}
-              title="VM Image"
-            >
-              <i className={`nav-icon fe fe-airplay`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-primary"
-              onClick={() => {
-                handleGoPort(row.id);
-              }}
-              title="Port"
-            >
-              <i className={`nav-icon fe fe-shield`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-warning"
-              onClick={() => {
-                handleGoConfiguration(row.id);
-              }}
-              title="Configuration"
-            >
-              <i className={`nav-icon fe fe-settings`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-info"
-              onClick={() => {
-                handleResetPassword(row.id);
-              }}
-              title="Reset Password"
-            >
-              <i className={`nav-icon fe fe-lock`}></i>
-            </div>
+            {checkUrlExists(userInfo, `${router.pathname}/[id]`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-success"
+                onClick={() => {
+                  handleGoDetail(row.id);
+                }}
+                title="Edit"
+              >
+                <i className={`nav-icon fe fe-edit`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/delete`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-danger"
+                onClick={() => {
+                  handleDelete(row.id);
+                }}
+                title="Delete"
+              >
+                <i className={`nav-icon fe fe-trash`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/vm`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-info"
+                onClick={() => {
+                  handleGoVm(row.id);
+                }}
+                title="VM Image"
+              >
+                <i className={`nav-icon fe fe-airplay`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/port`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-primary"
+                onClick={() => {
+                  handleGoPort(row.id);
+                }}
+                title="Port"
+              >
+                <i className={`nav-icon fe fe-shield`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/config`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-warning"
+                onClick={() => {
+                  handleGoConfiguration(row.id);
+                }}
+                title="Configuration"
+              >
+                <i className={`nav-icon fe fe-settings`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/resetPassword`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-info"
+                onClick={() => {
+                  handleResetPassword(row.id);
+                }}
+                title="Reset Password"
+              >
+                <i className={`nav-icon fe fe-lock`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         );
       },
@@ -220,7 +245,6 @@ const UserManagementPage = () => {
       .then((res) => {
         if (res.data.success) {
           setData(res.data.data);
-          console.log(res.data);
         } else {
           showToast("Error", "Something went wrong!", "failure");
         }
@@ -230,12 +254,16 @@ const UserManagementPage = () => {
   const handleResetPassword = (id) => {
     axios.post(`${SERVER_URL}/user/resetPassword`, { id: id }).then((res) => {
       if (res.data.success) {
-        showToast("Success", "Password has been updated successfully with 123456!", "success");
+        showToast(
+          "Success",
+          "Password has been updated successfully with 123456!",
+          "success"
+        );
       } else {
         showToast("Error", "Something went wrong!", "failure");
       }
     });
-  }
+  };
 
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/user/remove`, { id: id }).then((res) => {
@@ -309,12 +337,16 @@ const UserManagementPage = () => {
                     placeHolder="Select valid option"
                     onChange={handleValidOption}
                     className="border rounded"
-                  // defaultValue={defaultSelected}
+                    // defaultValue={defaultSelected}
                   />
                 </div>
-                <Button variant="primary" onClick={handleCreate}>
-                  <i className="fe fe-plus me-2"></i> Create
-                </Button>
+                {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
+                  <Button variant="primary" onClick={handleCreate}>
+                    <i className="fe fe-plus me-2"></i> Create
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Card.Body>
               <Card.Body className="p-3">
                 <DataTable

@@ -7,13 +7,16 @@ import { useRouter } from "next/router";
 import CustomSelect from "components/CustomSelect";
 import SearchBox from "components/Search";
 import { useToast } from "provider/ToastContext";
+import { useAuth } from "provider/AuthContext";
+import { checkUrlExists } from "utils/utility";
 
 const PortManagementPage = () => {
+  const { userInfo } = useAuth();
   const { showToast } = useToast();
+  const router = useRouter();
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState("");
   const [keyword, setKeyword] = useState("");
-  const router = useRouter();
 
   const validOption = [
     { label: "All", value: "" },
@@ -80,46 +83,54 @@ const PortManagementPage = () => {
       selector: (row) => {
         return (
           <div className="d-flex align-items-center">
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-success"
-              onClick={() => {
-                handleGoDetail(row.id);
-              }}
-              title="Edit"
-            >
-              <i className={`nav-icon fe fe-edit`}></i>
-            </div>
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-danger"
-              onClick={() => {
-                handleDelete(row.id);
-              }}
-              title="Delete"
-            >
-              <i className={`nav-icon fe fe-trash`}></i>
-            </div>
+            {checkUrlExists(userInfo, `${router.pathname}/[id]`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-success"
+                onClick={() => {
+                  handleGoDetail(row.id);
+                }}
+                title="Edit"
+              >
+                <i className={`nav-icon fe fe-edit`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/delete`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-danger"
+                onClick={() => {
+                  handleDelete(row.id);
+                }}
+                title="Delete"
+              >
+                <i className={`nav-icon fe fe-trash`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         );
       },
@@ -214,9 +225,13 @@ const PortManagementPage = () => {
                     // defaultValue={defaultSelected}
                   />
                 </div>
-                <Button variant="primary" onClick={handleCreate}>
-                  <i className="fe fe-plus me-2"></i> Create
-                </Button>
+                {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
+                  <Button variant="primary" onClick={handleCreate}>
+                    <i className="fe fe-plus me-2"></i> Create
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Card.Body>
               <Card.Body className="p-3">
                 <DataTable

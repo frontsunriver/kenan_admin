@@ -21,3 +21,22 @@ export const formatTimestamp = (timestamp) => {
 
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
+
+export const findUniqueValues = (array1, array2) => {
+  const combined = [...array1, ...array2];
+  const uniqueValues = combined.filter((item, index) => {
+    return (
+      combined.indexOf(item) === index &&
+      !(array1.includes(item) && array2.includes(item))
+    );
+  });
+  return uniqueValues;
+};
+
+export const checkUrlExists = (userInfo, url) => {
+  if (userInfo && userInfo["roles"]) {
+    return userInfo["roles"].some((permission) => permission.url === url);
+  } else {
+    return false;
+  }
+};

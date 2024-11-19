@@ -89,7 +89,6 @@ const UserManagementPage = () => {
 
   const handleChange = (e) => {
     selectedRecord = [];
-    console.log(e.selectedRows);
     selectedRecord = e.selectedRows;
   };
 

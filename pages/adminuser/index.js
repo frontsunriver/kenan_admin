@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Col, Row, Card, Tab, Container, Button, Badge } from "react-bootstrap";
-import { FormSelect } from "widgets";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
+import { useAuth } from "provider/AuthContext";
+import { checkUrlExists } from "utils/utility";
 import SearchBox from "components/Search";
 import CustomSelect from "components/CustomSelect";
 
 const AdminManagementPage = () => {
+  const { userInfo } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
   const [data, setData] = useState([]);
@@ -42,54 +44,61 @@ const AdminManagementPage = () => {
           </Badge>
         );
       },
-      sortable: true,
       grow: 1,
     },
     {
       name: "Action",
       selector: (row) => {
         return (
-          <div className="d-flex items-center">
-            {/* <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-success"
-              onClick={() => {
-                handleGoDetail(row.id);
-              }}
-              title="Edit"
-            >
-              <i className={`nav-icon fe fe-edit`}></i>
-            </div> */}
-            <div
-              style={{
-                background: "#e2e2e2",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "white",
-              }}
-              className="me-1 p-2 bg-danger"
-              onClick={() => {
-                handleDelete(row.id);
-              }}
-              title="Delete"
-            >
-              <i className={`nav-icon fe fe-trash`}></i>
-            </div>
+          <div className="d-flex align-items-center">
+            {checkUrlExists(userInfo, `${router.pathname}/[id]`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-success"
+                onClick={() => {
+                  handleGoDetail(row.id);
+                }}
+                title="Edit"
+              >
+                <i className={`nav-icon fe fe-edit`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/delete`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-danger"
+                onClick={() => {
+                  handleDelete(row.id);
+                }}
+                title="Delete"
+              >
+                <i className={`nav-icon fe fe-trash`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         );
       },
@@ -97,7 +106,7 @@ const AdminManagementPage = () => {
     },
   ];
 
-  const handleShowModal = (id) => {
+  const handleGoDetail = (id) => {
     router.push(`/adminuser/${id}`);
   };
 
@@ -129,8 +138,8 @@ const AdminManagementPage = () => {
       });
   };
 
-  const handleGoCreate = () => {
-    router.push("/category/create");
+  const handleCreate = () => {
+    router.push("/adminuser/create");
   };
 
   const handleDelete = (id) => {
@@ -191,9 +200,13 @@ const AdminManagementPage = () => {
                     // defaultValue={defaultSelected}
                   />
                 </div>
-                {/* <Button variant="primary" onClick={handleCreate}>
-                  <i className="fe fe-plus me-2"></i> Create
-                </Button> */}
+                {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
+                  <Button variant="primary" onClick={handleCreate}>
+                    <i className="fe fe-plus me-2"></i> Create
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Card.Body>
               <Card.Body className="p-3">
                 <DataTable

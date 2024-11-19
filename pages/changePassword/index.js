@@ -24,7 +24,6 @@ const UserDetailPage = () => {
         .post(`${SERVER_URL}/admin/findById`, { id: userInfo.id })
         .then((res) => {
           if (res.data.success) {
-            console.log(res.data.data);
             setData(res.data.data[0]);
           }
         });
