@@ -38,9 +38,9 @@ const NavbarVertical = (props) => {
   const MenuArray = [
     {
       id: uuid(),
-      title: "Users",
+      title: "Group Users",
       icon: "users",
-      link: "/user",
+      link: "/group_user",
     },
     {
       id: uuid(),
@@ -68,6 +68,18 @@ const NavbarVertical = (props) => {
     },
     {
       id: uuid(),
+      title: "Groups",
+      icon: "server",
+      link: "/group",
+    },
+    {
+      id: uuid(),
+      title: "Users",
+      icon: "user",
+      link: "/user",
+    },
+    {
+      id: uuid(),
       title: "User Machines",
       icon: "monitor",
       link: "/machine",
@@ -81,7 +93,7 @@ const NavbarVertical = (props) => {
     {
       id: uuid(),
       title: "Administrators",
-      icon: "user",
+      icon: "award",
       link: "/adminuser",
     },
     {
@@ -192,7 +204,7 @@ const NavbarVertical = (props) => {
 
   return (
     <Fragment>
-      <SimpleBar style={{ maxHeight: "100vh" }}>
+      <SimpleBar style={{ maxHeight: "100vh", background: '#f1f5f9' }}>
         <div className="nav-scroller">
           <Link href="/" className="navbar-brand">
             <Image src="/images/logo.png" alt="" />

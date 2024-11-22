@@ -13,18 +13,33 @@ const AdminManagementPage = () => {
 
   const columns = [
     {
-      name: "Object Type",
+      name: "User Type",
       selector: (row) => {
         return row.user_type == 0 ? (
-          <Badge pill bg="primary" className="me-1">
+          <Badge
+            pill
+            bg="primary"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             User
           </Badge>
         ) : row.user_type == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Admin
           </Badge>
         ) : (
-          <Badge pill bg="info" className="me-1">
+          <Badge
+            pill
+            bg="info"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Machine
           </Badge>
         );

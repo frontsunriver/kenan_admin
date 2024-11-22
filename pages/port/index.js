@@ -52,11 +52,21 @@ const PortManagementPage = () => {
       name: "Is Https",
       selector: (row) => {
         return row.is_https == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Yes
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             No
           </Badge>
         );
@@ -67,11 +77,21 @@ const PortManagementPage = () => {
       name: "Status",
       selector: (row) => {
         return row.is_active == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Disabled
           </Badge>
         );

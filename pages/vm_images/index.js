@@ -68,11 +68,21 @@ const VMImageManagementPage = () => {
       name: "Valid",
       selector: (row) => {
         return row.is_valid == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Disabled
           </Badge>
         );

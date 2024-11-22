@@ -56,11 +56,21 @@ const UserManagementPage = () => {
       name: "Valid",
       selector: (row) => {
         return row.is_valid == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Disabled
           </Badge>
         );
@@ -120,31 +130,7 @@ const UserManagementPage = () => {
             ) : (
               <></>
             )}
-            {checkUrlExists(userInfo, `${router.pathname}/vm`) ? (
-              <div
-                style={{
-                  background: "#e2e2e2",
-                  borderRadius: "50%",
-                  width: "35px",
-                  height: "35px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  color: "white",
-                }}
-                className="me-1 p-2 bg-info"
-                onClick={() => {
-                  handleGoVm(row.id);
-                }}
-                title="VM Image"
-              >
-                <i className={`nav-icon fe fe-airplay`}></i>
-              </div>
-            ) : (
-              <></>
-            )}
-            {checkUrlExists(userInfo, `${router.pathname}/port`) ? (
+            {checkUrlExists(userInfo, `${router.pathname}/group`) ? (
               <div
                 style={{
                   background: "#e2e2e2",
@@ -159,35 +145,11 @@ const UserManagementPage = () => {
                 }}
                 className="me-1 p-2 bg-primary"
                 onClick={() => {
-                  handleGoPort(row.id);
+                  handleGoGroup(row.id);
                 }}
-                title="Port"
+                title="User Group"
               >
-                <i className={`nav-icon fe fe-shield`}></i>
-              </div>
-            ) : (
-              <></>
-            )}
-            {checkUrlExists(userInfo, `${router.pathname}/config`) ? (
-              <div
-                style={{
-                  background: "#e2e2e2",
-                  borderRadius: "50%",
-                  width: "35px",
-                  height: "35px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  color: "white",
-                }}
-                className="me-1 p-2 bg-warning"
-                onClick={() => {
-                  handleGoConfiguration(row.id);
-                }}
-                title="Configuration"
-              >
-                <i className={`nav-icon fe fe-settings`}></i>
+                <i className={`nav-icon fe fe-users`}></i>
               </div>
             ) : (
               <></>
@@ -280,20 +242,12 @@ const UserManagementPage = () => {
     router.push("/user/create");
   };
 
+  const handleGoGroup = (id) => {
+    router.push(`/user/group/${id}`);
+  };
+
   const handleGoDetail = (id) => {
     router.push(`/user/${id}`);
-  };
-
-  const handleGoVm = (id) => {
-    router.push(`/user/vmmachine/${id}`);
-  };
-
-  const handleGoPort = (id) => {
-    router.push(`/user/port/${id}`);
-  };
-
-  const handleGoConfiguration = (id) => {
-    router.push(`/user/user_config/${id}`);
   };
 
   const handleSearch = () => {

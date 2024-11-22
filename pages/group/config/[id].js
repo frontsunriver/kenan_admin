@@ -21,29 +21,36 @@ const UserManagementPage = () => {
 
   const getDataList = async () => {
     try {
-      const res = await axios.post(`${SERVER_URL}/userConfig/findByUserId`, {
-        user_id: id,
+      const res = await axios.post(`${SERVER_URL}/groupConfig/findByGroupId`, {
+        group_id: id,
       });
-      if (res.data.success) {
-        if (res.data.data.length > 0) {
-          setData(res.data.data);
-          setCopyTextToVm(res.data.data[0].copy_text_to_vm == 1 ? true : false);
-          setCopyTextFromVm(
-            res.data.data[0].copy_text_from_vm == 1 ? true : false
+      if (res.data.status == 200) {
+        if (res.data.data.data.length > 0) {
+          setData(res.data.data.data[0]);
+          setCopyTextToVm(
+            res.data.data.data[0].copy_text_to_vm == 1 ? true : false
           );
-          setCopyFileToVm(res.data.data[0].copy_file_to_vm == 1 ? true : false);
+          setCopyTextFromVm(
+            res.data.data.data[0].copy_text_from_vm == 1 ? true : false
+          );
+          setCopyFileToVm(
+            res.data.data.data[0].copy_file_to_vm == 1 ? true : false
+          );
           setCopyFileFromVm(
-            res.data.data[0].copy_file_from_vm == 1 ? true : false
+            res.data.data.data[0].copy_file_from_vm == 1 ? true : false
           );
           setAllowScreenshot(
-            res.data.data[0].allow_screenshot == 1 ? true : false
+            res.data.data.data[0].allow_screenshot == 1 ? true : false
           );
-          setOutBound(res.data.data[0].enable_outbound == 1 ? true : false);
+          setOutBound(
+            res.data.data.data[0].enable_outbound == 1 ? true : false
+          );
         }
       } else {
-        showToast("Error", "Error fetching user configuration", "failure");
+        showToast("Error", "Error fetching group configuration", "failure");
       }
     } catch (error) {
+      console.log(error);
       showToast("Error", "An unexpected error occurred", "failure");
     }
   };
@@ -56,7 +63,7 @@ const UserManagementPage = () => {
 
   const handleUpdate = async () => {
     await axios
-      .post(`${SERVER_URL}/userConfig/update`, {
+      .post(`${SERVER_URL}/groupConfig/update`, {
         id: id,
         copy_file_to_vm: copyFileToVm ? 1 : 0,
         copy_file_from_vm: copyFileFromVm ? 1 : 0,
@@ -70,7 +77,7 @@ const UserManagementPage = () => {
           getDataList();
           showToast(
             "Success",
-            "User configuration updated successfully",
+            "Group configuration updated successfully",
             "success"
           );
         } else {
@@ -108,7 +115,7 @@ const UserManagementPage = () => {
       <Row>
         <Col lg={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
-            <h1 className="mb-1 h2 fw-bold">User Configuration Management</h1>
+            <h1 className="mb-1 h2 fw-bold">Group Configuration Management</h1>
           </div>
         </Col>
       </Row>

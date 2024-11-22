@@ -3,7 +3,7 @@ import Toast from "../Toast/Toast";
 import { useToast } from "provider/ToastContext";
 
 const ToastList = () => {
-  const { toasts, position, removeToast } = useToast();
+  const { toasts, position = "top-right", removeToast } = useToast();
   const listRef = useRef(null);
 
   const handleScrolling = (el) => {
@@ -42,10 +42,6 @@ const ToastList = () => {
       </div>
     )
   );
-};
-
-ToastList.defaultProps = {
-  position: "top-right",
 };
 
 export default ToastList;

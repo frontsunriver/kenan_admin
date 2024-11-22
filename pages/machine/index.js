@@ -37,31 +37,31 @@ const UserMachineManagementPage = () => {
       grow: 1,
       sortable: true,
     },
-    {
-      name: "Status",
-      selector: (row) => {
-        return row.status == 1 ? (
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#6cff00",
-            }}
-          ></div>
-        ) : (
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#e2e2e2",
-            }}
-          ></div>
-        );
-      },
-      grow: 1,
-    },
+    // {
+    //   name: "Status",
+    //   selector: (row) => {
+    //     return row.status == 1 ? (
+    //       <div
+    //         style={{
+    //           width: "10px",
+    //           height: "10px",
+    //           borderRadius: "50%",
+    //           background: "#6cff00",
+    //         }}
+    //       ></div>
+    //     ) : (
+    //       <div
+    //         style={{
+    //           width: "10px",
+    //           height: "10px",
+    //           borderRadius: "50%",
+    //           background: "#e2e2e2",
+    //         }}
+    //       ></div>
+    //     );
+    //   },
+    //   grow: 1,
+    // },
     {
       name: "Count",
       selector: (row) => row.started_count,
@@ -80,11 +80,21 @@ const UserMachineManagementPage = () => {
       name: "Valid",
       selector: (row) => {
         return row.is_valid == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Enabled
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Disabled
           </Badge>
         );

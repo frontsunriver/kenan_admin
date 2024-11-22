@@ -37,11 +37,21 @@ const UserManagementPage = () => {
       name: "Https",
       selector: (row) => {
         return row.is_https == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Yes
           </Badge>
         ) : (
-          <Badge pill bg="danger" className="me-1">
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             No
           </Badge>
         );
@@ -68,8 +78,8 @@ const UserManagementPage = () => {
       const response = await axios.post(`${SERVER_URL}/port/getAll`);
       if (response.data.status == 200) {
         setData(response.data.data.data);
-        const res = await axios.post(`${SERVER_URL}/userPort/findByUserId`, {
-          user_id: id,
+        const res = await axios.post(`${SERVER_URL}/groupPort/findByGroupId`, {
+          group_id: id,
         });
         if (res.data.status == 200) {
           const userPortIds = res.data.data.data.map(
@@ -105,14 +115,14 @@ const UserManagementPage = () => {
 
   const handleUpdate = async () => {
     await axios
-      .post(`${SERVER_URL}/userPort/batchUpdate`, {
+      .post(`${SERVER_URL}/groupPort/batchUpdate`, {
         data: selectedRecord,
         id: id,
       })
       .then((res) => {
         if (res.data.success) {
           getPortList();
-          showToast("Success", "User Port updated successfully", "success");
+          showToast("Success", "Group port updated successfully", "success");
         } else {
           showToast("Error", "An unexpected error occurred", "failure");
         }
@@ -124,7 +134,7 @@ const UserManagementPage = () => {
       <Row>
         <Col lg={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
-            <h1 className="mb-1 h2 fw-bold">User Port Management</h1>
+            <h1 className="mb-1 h2 fw-bold">Group Port Management</h1>
           </div>
         </Col>
       </Row>

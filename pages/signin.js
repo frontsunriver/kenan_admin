@@ -1,8 +1,6 @@
 // import node module libraries
 import { Row, Col, Card, Form, Button, Image } from "react-bootstrap";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import AuthLayout from "layouts/AuthLayout";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -32,14 +30,12 @@ const SignIn = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
         showToast("Error", err, "failure");
       });
   };
   return (
     <Row className="align-items-center justify-content-center g-0 min-vh-100">
       <Col xxl={4} lg={6} md={8} xs={12} className="py-8 py-xl-0">
-        <ToastContainer />
         <Card className="smooth-shadow-md">
           {/* Card body */}
           <Card.Body className="p-6">

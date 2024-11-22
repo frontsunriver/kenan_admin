@@ -20,15 +20,30 @@ const UserSessionLogDetail = () => {
       name: "Object Type",
       selector: (row) => {
         return row.user_type == 0 ? (
-          <Badge pill bg="primary" className="me-1">
+          <Badge
+            pill
+            bg="primary"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             User
           </Badge>
         ) : row.user_type == 1 ? (
-          <Badge pill bg="success" className="me-1">
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Admin
           </Badge>
         ) : (
-          <Badge pill bg="info" className="me-1">
+          <Badge
+            pill
+            bg="info"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
             Machine
           </Badge>
         );
@@ -102,7 +117,7 @@ const UserSessionLogDetail = () => {
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
-      <PageHeading heading="Update User VM" />
+      <PageHeading heading="User logs" />
       <Row className="mb-8">
         <Col xl={12} lg={12} md={12} xs={12}>
           <Card>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Col, Row, Card, Tab, Container, Button } from "react-bootstrap";
+import { Col, Row, Card, Tab, Container, Button, Badge } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
-import { formatTimestamp } from "utils/utility";
 
 let selectedRecord = [];
 const UserManagementPage = () => {
@@ -15,31 +14,7 @@ const UserManagementPage = () => {
   const { id } = router.query;
 
   const columns = [
-    { name: "Title", selector: (row) => row.title, grow: 1, sortable: true },
-    {
-      name: "Password",
-      selector: (row) => row.password,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
-      grow: 3,
-      sortable: true,
-    },
-    {
-      name: "Download URL",
-      selector: (row) => row.download_url,
-      grow: 2,
-      sortable: true,
-    },
-    {
-      name: "Created At",
-      selector: (row) => formatTimestamp(row.created_at),
-      grow: 1,
-      sortable: true,
-    },
+    { name: "Name", selector: (row) => row.name, grow: 1, sortable: true },
   ];
 
   const rowSelectCriteria = (row) => row.is_selected;
@@ -53,28 +28,28 @@ const UserManagementPage = () => {
     },
   };
 
-  const getVmList = async () => {
+  const getDataList = async () => {
     selectedRecord = [];
     try {
-      const response = await axios.post(`${SERVER_URL}/vmimage/getAll`);
-      if (response.data.success) {
-        setData(response.data.data);
-        const res = await axios.post(`${SERVER_URL}/uservm/findByUserId`, {
+      const response = await axios.post(`${SERVER_URL}/group/getAll`);
+      if (response.data.status == 200) {
+        setData(response.data.data.data);
+        const res = await axios.post(`${SERVER_URL}/groupUser/findByUserId`, {
           user_id: id,
         });
         if (res.data.status == 200) {
-          const vmImageIds = res.data.data.data.map((item) => item.vm_image_id);
-          const updatedVMList = response.data.data.map((item) => ({
+          const userPortIds = res.data.data.data.map((item) => item.group_id);
+          const updatedPortList = response.data.data.data.map((item) => ({
             ...item,
-            is_selected: vmImageIds.includes(item.id),
+            is_selected: userPortIds.includes(item.id),
           }));
-          selectedRecord = updatedVMList.filter((item) => item.is_selected);
-          setData(updatedVMList);
+          selectedRecord = updatedPortList.filter((item) => item.is_selected);
+          setData(updatedPortList);
         } else {
-          showToast("Error", "Error fetching user VM list", "failure");
+          showToast("Error", "Error fetching user group list", "failure");
         }
       } else {
-        showToast("Error", "Error fetching user VM list", "failure");
+        showToast("Error", "Error fetching user group list", "failure");
       }
     } catch (error) {
       showToast("Error", "An unexpected error occurred", "failure");
@@ -83,7 +58,7 @@ const UserManagementPage = () => {
 
   useEffect(() => {
     if (id) {
-      getVmList();
+      getDataList();
     }
   }, []);
 
@@ -94,14 +69,14 @@ const UserManagementPage = () => {
 
   const handleUpdate = async () => {
     await axios
-      .post(`${SERVER_URL}/uservm/batchUpdate`, {
+      .post(`${SERVER_URL}/groupUser/batchUpdate`, {
         data: selectedRecord,
         id: id,
       })
       .then((res) => {
         if (res.data.success) {
-          getVmList();
-          showToast("Success", "User VM Image updated successfully", "success");
+          getDataList();
+          showToast("Success", "Group user updated successfully", "success");
         } else {
           showToast("Error", "An unexpected error occurred", "failure");
         }
@@ -113,7 +88,7 @@ const UserManagementPage = () => {
       <Row>
         <Col lg={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
-            <h1 className="mb-1 h2 fw-bold">User VM Image Management</h1>
+            <h1 className="mb-1 h2 fw-bold">Group User Management</h1>
           </div>
         </Col>
       </Row>

@@ -4,13 +4,13 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
+import CustomSelect from "components/CustomSelect";
+import SearchBox from "components/Search";
 import { useToast } from "provider/ToastContext";
 import { useAuth } from "provider/AuthContext";
-import { formatTimestamp, checkUrlExists } from "utils/utility";
-import SearchBox from "components/Search";
-import CustomSelect from "components/CustomSelect";
+import { checkUrlExists } from "utils/utility";
 
-const UserMachineManagementPage = () => {
+const PortManagementPage = () => {
   const { userInfo } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
@@ -23,63 +23,40 @@ const UserMachineManagementPage = () => {
     { label: "Enabled", value: "1" },
     { label: "Disabled", value: "0" },
   ];
-
   const columns = [
     {
-      name: "User Email",
+      name: "Email",
       selector: (row) => row.email,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Machine ID",
-      selector: (row) => row.machine_id,
       sortable: true,
       grow: 1,
     },
     {
-      name: "IP",
-      selector: (row) => row.ip,
-      sortable: true,
-      grow: 1,
-    },
-    {
-      name: "Created At",
-      selector: (row) => {
-        return formatTimestamp(row.created_at);
-      },
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Updated At",
-      selector: (row) => {
-        return formatTimestamp(row.updated_at);
-      },
+      name: "Group Name",
+      selector: (row) => row.name,
       grow: 1,
       sortable: true,
     },
     {
       name: "Status",
       selector: (row) => {
-        return row.status == 1 ? (
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#6cff00",
-            }}
-          ></div>
+        return row.is_valid == 1 ? (
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
+            Enabled
+          </Badge>
         ) : (
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#e2e2e2",
-            }}
-          ></div>
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
+            Disabled
+          </Badge>
         );
       },
       grow: 1,
@@ -89,7 +66,7 @@ const UserMachineManagementPage = () => {
       selector: (row) => {
         return (
           <div className="d-flex align-items-center">
-            {checkUrlExists(userInfo, `${router.pathname}/logs`) ? (
+            {checkUrlExists(userInfo, `${router.pathname}/[id]`) ? (
               <div
                 style={{
                   background: "#e2e2e2",
@@ -104,11 +81,35 @@ const UserMachineManagementPage = () => {
                 }}
                 className="me-1 p-2 bg-success"
                 onClick={() => {
-                  handleGoDetail(row.user_id);
+                  handleGoDetail(row.id);
                 }}
                 title="Edit"
               >
-                <i className={`nav-icon fe fe-book-open`}></i>
+                <i className={`nav-icon fe fe-edit`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/delete`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-danger"
+                onClick={() => {
+                  handleDelete(row.id);
+                }}
+                title="Delete"
+              >
+                <i className={`nav-icon fe fe-trash`}></i>
               </div>
             ) : (
               <></>
@@ -131,35 +132,40 @@ const UserMachineManagementPage = () => {
 
   useEffect(() => {
     getData(keyword, flag);
-
-    const interval = setInterval(() => {
-      getData(keyword, flag);
-    }, 15000);
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [keyword, flag]);
+  }, []);
 
   const getData = (searchKeyword, valid) => {
     axios
-      .post(`${SERVER_URL}/userSession/getAll`, {
+      .post(`${SERVER_URL}/groupUser/getAll`, {
         keyword: searchKeyword,
         flag: valid,
       })
       .then((res) => {
-        if (res.data.success) {
-          setData(res.data.data);
+        if (res.data.status == 200) {
+          setData(res.data.data.data);
         } else {
-          showToast("Error", "Something went wrong!", "failure");
+          console.log("error");
         }
       });
   };
 
+  const handleDelete = (id) => {
+    axios.post(`${SERVER_URL}/groupUser/remove`, { id: id }).then((res) => {
+      if (res.data.success) {
+        getData(keyword, flag);
+        showToast("Success", "Item has been deleted successfully", "success");
+      } else {
+        console.log("error");
+      }
+    });
+  };
+
   const handleCreate = () => {
-    router.push("/machine/create");
+    router.push("/group_user/create");
   };
 
   const handleGoDetail = (id) => {
-    router.push(`/user_session/${id}`);
+    router.push(`/group_user/${id}`);
   };
 
   const handleSearch = () => {
@@ -177,7 +183,7 @@ const UserMachineManagementPage = () => {
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
-              <h1 className="mb-1 h2 fw-bold">User Sessions</h1>
+              <h1 className="mb-1 h2 fw-bold">Group User Management</h1>
             </div>
           </div>
         </Col>
@@ -196,7 +202,7 @@ const UserMachineManagementPage = () => {
                   />
                   <CustomSelect
                     options={validOption}
-                    placeHolder="Select valid option"
+                    placeHolder="Select status option"
                     onChange={handleValidOption}
                     className="border rounded"
                     // defaultValue={defaultSelected}
@@ -226,4 +232,4 @@ const UserMachineManagementPage = () => {
   );
 };
 
-export default UserMachineManagementPage;
+export default PortManagementPage;

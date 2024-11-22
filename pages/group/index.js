@@ -4,13 +4,13 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
+import CustomSelect from "components/CustomSelect";
+import SearchBox from "components/Search";
 import { useToast } from "provider/ToastContext";
 import { useAuth } from "provider/AuthContext";
-import { checkUrlExists } from "utils/utility";
-import SearchBox from "components/Search";
-import CustomSelect from "components/CustomSelect";
+import { formatTimestamp, checkUrlExists } from "utils/utility";
 
-const UserMachineManagementPage = () => {
+const GroupManagementPage = () => {
   const { userInfo } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
@@ -23,40 +23,31 @@ const UserMachineManagementPage = () => {
     { label: "Enabled", value: "1" },
     { label: "Disabled", value: "0" },
   ];
-
   const columns = [
     {
-      name: "User Email",
-      selector: (row) => row.email,
+      name: "Name",
+      selector: (row) => row.name,
+      sortable: true,
+      grow: 1,
+    },
+    {
+      name: "Created At",
+      selector: (row) => {
+        return formatTimestamp(row.created_at);
+      },
       grow: 1,
       sortable: true,
     },
     {
-      name: "Port Title",
-      selector: (row) => row.title,
+      name: "Updated At",
+      selector: (row) => {
+        return formatTimestamp(row.updated_at);
+      },
       grow: 1,
       sortable: true,
     },
     {
-      name: "Listen Port",
-      selector: (row) => row.listen_port,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Target",
-      selector: (row) => row.target,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Target Port",
-      selector: (row) => row.target_port,
-      grow: 1,
-      sortable: true,
-    },
-    {
-      name: "Valid",
+      name: "Status",
       selector: (row) => {
         return row.is_valid == 1 ? (
           <Badge
@@ -133,6 +124,78 @@ const UserMachineManagementPage = () => {
             ) : (
               <></>
             )}
+            {checkUrlExists(userInfo, `${router.pathname}/vm`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-info"
+                onClick={() => {
+                  handleGoVm(row.id);
+                }}
+                title="VM Image"
+              >
+                <i className={`nav-icon fe fe-airplay`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/port`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-primary"
+                onClick={() => {
+                  handleGoPort(row.id);
+                }}
+                title="Port"
+              >
+                <i className={`nav-icon fe fe-shield`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
+            {checkUrlExists(userInfo, `${router.pathname}/config`) ? (
+              <div
+                style={{
+                  background: "#e2e2e2",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                }}
+                className="me-1 p-2 bg-warning"
+                onClick={() => {
+                  handleGoConfiguration(row.id);
+                }}
+                title="Configuration"
+              >
+                <i className={`nav-icon fe fe-settings`}></i>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         );
       },
@@ -155,36 +218,48 @@ const UserMachineManagementPage = () => {
 
   const getData = (searchKeyword, valid) => {
     axios
-      .post(`${SERVER_URL}/userPort/getAll`, {
+      .post(`${SERVER_URL}/group/getAll`, {
         keyword: searchKeyword,
         flag: valid,
       })
       .then((res) => {
-        if (res.data.success) {
-          setData(res.data.data);
+        if (res.data.status == 200) {
+          setData(res.data.data.data);
         } else {
-          showToast("Error", "Something went wrong!", "failure");
+          console.log("error");
         }
       });
   };
 
   const handleDelete = (id) => {
-    axios.post(`${SERVER_URL}/userPort/remove`, { id: id }).then((res) => {
+    axios.post(`${SERVER_URL}/group/remove`, { id: id }).then((res) => {
       if (res.data.success) {
         getData(keyword, flag);
-        showToast("Success", "Item has been deleted successfully.", "success");
+        showToast("Success", "Item has been deleted successfully", "success");
       } else {
-        showToast("Error", "Something went wrong!", "failure");
+        console.log("error");
       }
     });
   };
 
   const handleCreate = () => {
-    router.push("/user_port/create");
+    router.push("/group/create");
   };
 
   const handleGoDetail = (id) => {
-    router.push(`/user_port/${id}`);
+    router.push(`/group/${id}`);
+  };
+
+  const handleGoVm = (id) => {
+    router.push(`/group/vmmachine/${id}`);
+  };
+
+  const handleGoPort = (id) => {
+    router.push(`/group/port/${id}`);
+  };
+
+  const handleGoConfiguration = (id) => {
+    router.push(`/group/config/${id}`);
   };
 
   const handleSearch = () => {
@@ -202,7 +277,7 @@ const UserMachineManagementPage = () => {
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
-              <h1 className="mb-1 h2 fw-bold">User Port Management</h1>
+              <h1 className="mb-1 h2 fw-bold">Group Management</h1>
             </div>
           </div>
         </Col>
@@ -221,7 +296,7 @@ const UserMachineManagementPage = () => {
                   />
                   <CustomSelect
                     options={validOption}
-                    placeHolder="Select valid option"
+                    placeHolder="Select status option"
                     onChange={handleValidOption}
                     className="border rounded"
                     // defaultValue={defaultSelected}
@@ -251,4 +326,4 @@ const UserMachineManagementPage = () => {
   );
 };
 
-export default UserMachineManagementPage;
+export default GroupManagementPage;
