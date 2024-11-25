@@ -10,7 +10,7 @@ import { formatTimestamp, checkUrlExists } from "utils/utility";
 import SearchBox from "components/Search";
 import CustomSelect from "components/CustomSelect";
 
-const UserMachineManagementPage = () => {
+const UserConnectionManagement = () => {
   const { userInfo } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
@@ -26,43 +26,52 @@ const UserMachineManagementPage = () => {
 
   const columns = [
     {
-      name: "User Email",
-      selector: (row) => row.email,
-      grow: 1,
-      sortable: true,
-    },
-    {
       name: "Machine ID",
       selector: (row) => row.machine_id,
       sortable: true,
       grow: 1,
     },
     {
-      name: "IP",
-      selector: (row) => row.ip,
-      sortable: true,
-      grow: 1,
-    },
-    {
-      name: "Created At",
-      selector: (row) => {
-        return formatTimestamp(row.created_at);
-      },
+      name: "User Email",
+      selector: (row) => row.email,
       grow: 1,
       sortable: true,
     },
+    // {
+    //   name: "Status",
+    //   selector: (row) => {
+    //     return row.status == 1 ? (
+    //       <div
+    //         style={{
+    //           width: "10px",
+    //           height: "10px",
+    //           borderRadius: "50%",
+    //           background: "#6cff00",
+    //         }}
+    //       ></div>
+    //     ) : (
+    //       <div
+    //         style={{
+    //           width: "10px",
+    //           height: "10px",
+    //           borderRadius: "50%",
+    //           background: "#e2e2e2",
+    //         }}
+    //       ></div>
+    //     );
+    //   },
+    //   grow: 1,
+    // },
     {
-      name: "Updated At",
-      selector: (row) => {
-        return formatTimestamp(row.updated_at);
-      },
+      name: "Listen Port",
+      selector: (row) => row.listen_port,
       grow: 1,
       sortable: true,
     },
     {
       name: "Status",
       selector: (row) => {
-        return row.status == 1 ? (
+        return row.connection_status == 1 ? (
           <div
             style={{
               width: "10px",
@@ -85,38 +94,12 @@ const UserMachineManagementPage = () => {
       grow: 1,
     },
     {
-      name: "Action",
+      name: "Updated At",
       selector: (row) => {
-        return (
-          <div className="d-flex align-items-center">
-            {checkUrlExists(userInfo, `${router.pathname}/logs`) ? (
-              <div
-                style={{
-                  background: "#e2e2e2",
-                  borderRadius: "50%",
-                  width: "35px",
-                  height: "35px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  color: "white",
-                }}
-                className="me-1 p-2 bg-success"
-                onClick={() => {
-                  handleGoDetail(row.user_id);
-                }}
-                title="Edit"
-              >
-                <i className={`nav-icon fe fe-book-open`}></i>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
-        );
+        return formatTimestamp(row.updated_at);
       },
       grow: 1,
+      sortable: true,
     },
   ];
 
@@ -134,14 +117,14 @@ const UserMachineManagementPage = () => {
 
     const interval = setInterval(() => {
       getData(keyword, flag);
-    }, 15000);
+    }, 10000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval); 
   }, []);
 
   const getData = (searchKeyword, valid) => {
     axios
-      .post(`${SERVER_URL}/userSession/getAll`, {
+      .post(`${SERVER_URL}/userConnection/getAll`, {
         keyword: searchKeyword,
         flag: valid,
       })
@@ -154,12 +137,23 @@ const UserMachineManagementPage = () => {
       });
   };
 
+  const handleDelete = (id) => {
+    axios.post(`${SERVER_URL}/usermachine/remove`, { id: id }).then((res) => {
+      if (res.data.success) {
+        getData(keyword, flag);
+        showToast("Success", "Item has been deleted successfully.", "success");
+      } else {
+        showToast("Error", "Something went wrong!", "failure");
+      }
+    });
+  };
+
   const handleCreate = () => {
     router.push("/machine/create");
   };
 
   const handleGoDetail = (id) => {
-    router.push(`/user_session/${id}`);
+    router.push(`/machine/${id}`);
   };
 
   const handleSearch = () => {
@@ -177,7 +171,7 @@ const UserMachineManagementPage = () => {
         <Col lg={12} md={12} sm={12}>
           <div className="border-bottom pb-4 mb-4 d-md-flex align-items-center justify-content-between">
             <div className="d-flex justify-content-between mb-3 mb-md-0">
-              <h1 className="mb-1 h2 fw-bold">User Sessions Status</h1>
+              <h1 className="mb-1 h2 fw-bold">User Connection Status</h1>
             </div>
           </div>
         </Col>
@@ -194,21 +188,21 @@ const UserMachineManagementPage = () => {
                     onSearch={handleSearch}
                     placeholder="Search..."
                   />
-                  <CustomSelect
+                  {/* <CustomSelect
                     options={validOption}
                     placeHolder="Select valid option"
                     onChange={handleValidOption}
                     className="border rounded"
                     // defaultValue={defaultSelected}
-                  />
+                  /> */}
                 </div>
-                {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
+                {/* {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
                   <Button variant="primary" onClick={handleCreate}>
                     <i className="fe fe-plus me-2"></i> Create
                   </Button>
                 ) : (
                   <></>
-                )}
+                )} */}
               </Card.Body>
               <Card.Body className="p-3">
                 <DataTable
@@ -226,4 +220,4 @@ const UserMachineManagementPage = () => {
   );
 };
 
-export default UserMachineManagementPage;
+export default UserConnectionManagement;

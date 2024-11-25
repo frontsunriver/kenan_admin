@@ -86,6 +86,12 @@ const NavbarVertical = (props) => {
     },
     {
       id: uuid(),
+      title: "User Connections",
+      icon: "loader",
+      link: "/user_conns",
+    },
+    {
+      id: uuid(),
       title: "User Sessions",
       icon: "book-open",
       link: "/user_session",
