@@ -84,6 +84,20 @@ const MachineCreatePage = () => {
             <Card.Body>
               <div>
                 <Form>
+                  
+                  <Row className="mb-3">
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      User
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <CustomSelect
+                        options={userOption}
+                        placeHolder="Select User"
+                        onChange={handleUserChange}
+                        className="border rounded"
+                      />
+                    </Col>
+                  </Row>
                   <Row className="mb-3">
                     <label
                       htmlFor="machine"
@@ -100,19 +114,6 @@ const MachineCreatePage = () => {
                         onChange={(e) => setMachineId(e.target.value)}
                       />
                     </div>
-                  </Row>
-                  <Row className="mb-3">
-                    <Form.Label className="col-sm-4" htmlFor="type">
-                      User
-                    </Form.Label>
-                    <Col md={4} xs={4}>
-                      <CustomSelect
-                        options={userOption}
-                        placeHolder="Select User"
-                        onChange={handleUserChange}
-                        className="border rounded"
-                      />
-                    </Col>
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">

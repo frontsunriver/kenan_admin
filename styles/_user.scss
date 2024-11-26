@@ -388,6 +388,18 @@
   align-items: center;
 }
 
+.dropdown-search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.dropdown-search-input:focus-visible :focus :target {
+  border: 1px solid #e2e2e2;
+}
+
 .custom--dropdown-container .dropdown-tag-close {
   display: -webkit-box;
   display: -ms-flexbox;

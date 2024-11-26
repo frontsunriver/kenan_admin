@@ -107,6 +107,22 @@ const UserDetailPage = () => {
               <div>
                 <Form>
                   {/* row */}
+
+                  <Row className="mb-3">
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      User
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <CustomSelect
+                        options={userOptions}
+                        placeHolder="Select user option"
+                        onChange={handleUserChange}
+                        className="border rounded"
+                        defaultValue={defaultUserOption}
+                        value={userId}
+                      />
+                    </Col>
+                  </Row>
                   <Row className="mb-3">
                     <label
                       htmlFor="fullName"
@@ -124,21 +140,6 @@ const UserDetailPage = () => {
                         value={machineId}
                       />
                     </div>
-                  </Row>
-                  <Row className="mb-3">
-                    <Form.Label className="col-sm-4" htmlFor="type">
-                      User
-                    </Form.Label>
-                    <Col md={4} xs={4}>
-                      <CustomSelect
-                        options={userOptions}
-                        placeHolder="Select user option"
-                        onChange={handleUserChange}
-                        className="border rounded"
-                        defaultValue={defaultUserOption}
-                        value={userId}
-                      />
-                    </Col>
                   </Row>
                   <Row className="mb-3">
                     <Form.Label className="col-sm-4" htmlFor="type">

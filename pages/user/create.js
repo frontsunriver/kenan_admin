@@ -12,6 +12,8 @@ import CustomInput from "components/CustomInput";
 const UserCreatePage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [type, setType] = useState("");
   const { showToast } = useToast();
 
@@ -25,6 +27,22 @@ const UserCreatePage = () => {
       showToast("Error", "Please fill email!", "failure");
       return;
     }
+    if (password == "") {
+      showToast("Error", "Please fill password!", "failure");
+      return;
+    }
+    if (confirmPassword == "") {
+      showToast("Error", "Please fill confirmPassword!", "failure");
+      return;
+    }
+    if (password != confirmPassword) {
+      showToast(
+        "Error",
+        "Password should be same with confirm password",
+        "failure"
+      );
+      return;
+    }
     if (type == "") {
       showToast("Error", "Please select status!", "failure");
       return;
@@ -33,13 +51,14 @@ const UserCreatePage = () => {
     await axios
       .post(`${SERVER_URL}/user/create`, {
         email: email,
+        password: password,
         is_valid: type,
       })
       .then((res) => {
         if (res.data.success) {
           showToast(
             "Success",
-            "User has been created. Password is 123456",
+            `User has been created. Password is ${password}`,
             "success"
           );
           router.push("/user");
@@ -70,7 +89,7 @@ const UserCreatePage = () => {
                       className="col-sm-4 col-form-label
                     form-label"
                     >
-                      email
+                      Email
                     </label>
                     <div className="col-sm-4 mb-3 mb-lg-0">
                       <CustomInput
@@ -78,6 +97,40 @@ const UserCreatePage = () => {
                         placeholder="Email"
                         required
                         onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </Row>
+                  <Row className="mb-3">
+                    <label
+                      htmlFor="password"
+                      className="col-sm-4 col-form-label
+                    form-label"
+                    >
+                      Password
+                    </label>
+                    <div className="col-sm-4 mb-3 mb-lg-0">
+                      <CustomInput
+                        type="password"
+                        placeholder="Password"
+                        required
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                  </Row>
+                  <Row className="mb-3">
+                    <label
+                      htmlFor="Confirm_password"
+                      className="col-sm-4 col-form-label
+                    form-label"
+                    >
+                      Confirm Password
+                    </label>
+                    <div className="col-sm-4 mb-3 mb-lg-0">
+                      <CustomInput
+                        type="password"
+                        placeholder="Confirm Password"
+                        required
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                       />
                     </div>
                   </Row>

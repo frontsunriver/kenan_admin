@@ -26,16 +26,16 @@ const UserConnectionManagement = () => {
 
   const columns = [
     {
-      name: "Machine ID",
-      selector: (row) => row.machine_id,
-      sortable: true,
-      grow: 1,
-    },
-    {
       name: "User Email",
       selector: (row) => row.email,
       grow: 1,
       sortable: true,
+    },
+    {
+      name: "Machine ID",
+      selector: (row) => row.machine_id,
+      sortable: true,
+      grow: 1,
     },
     // {
     //   name: "Status",

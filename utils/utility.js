@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export const formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes";
   const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -39,4 +41,8 @@ export const checkUrlExists = (userInfo, url) => {
   } else {
     return false;
   }
+};
+
+export const hashPassword = (password) => {
+  return crypto.createHash("sha256").update(password).digest("hex");
 };
