@@ -92,7 +92,23 @@ npm install -g yarn
 yarn install
 ```
 
+5. Build your project
+
+```
+yarn run build
+```
+
 ###### After finished project build successfully, you can see out(build) folder.
+
+4. Copy build file to apache/nginx server.
+
+```
+cp -a out/. /var/www/html/
+```
+
+```
+systemctl restart apache2/nginx
+```
 
 ## Technical Support or Questions
 If you have questions or need help integrating the product please [contact me](https://t.me/sunriver0217).
