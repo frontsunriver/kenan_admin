@@ -92,5 +92,7 @@ npm install -g yarn
 yarn install
 ```
 
+###### After finished project build successfully, you can see out(build) folder.
+
 ## Technical Support or Questions
 If you have questions or need help integrating the product please [contact me](https://t.me/sunriver0217).
