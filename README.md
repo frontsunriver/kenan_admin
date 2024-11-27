@@ -1,4 +1,4 @@
-# [Kenan Admin]
+# Kenan Admin
  Kenan Admin - Next.js Admin Dashboard created by [FrontSunriver](https://github.com/frontsunriver) and available on Github
 
 ## How to use Kenan Admin?
