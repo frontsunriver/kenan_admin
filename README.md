@@ -25,9 +25,10 @@ yarn install
 ```
 
 2. Check configuration
-First you need to check the configuration [/config/constant.js] and confirm the [product_mode] variable.
 
-If product mode is 0 it's development mode and if product mode is 1 it's production mode.
+###### First you need to check the configuration [/config/constant.js] and confirm the [product_mode] variable.
+
+###### If product mode is 0 it's development mode and if product mode is 1 it's production mode.
 
 3. Run your project
 
