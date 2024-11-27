@@ -1,17 +1,14 @@
-# [DashUI Next.js Free Admin Template](https://dashui-free-nextjs-admin-template.vercel.app/)
- Dash UI - Next.js Free admin / dashboard  template created by [Codescandy](https://codescandy.com/) and available on Github
+# [Kenan Admin]
+ Kenan Admin - Next.js Admin Dashboard created by [FrontSunriver](https://github.com/frontsunriver) and available on Github
 
-![dashui-free-nextjs-admin-template](https://user-images.githubusercontent.com/68774600/231716707-3da30d19-b826-4692-b03a-fed41376d250.jpg)
+## How to use Kenan Admin?
 
- 
-## How to use DashUI?
-
-Clone the Dash UI repo:
+Clone the Kenan Admin Repo(This repository is private repository):
 ```
-git clone https://github.com/codescandy/dashui-free-nextjs-admin-template.git
+git clone https://github.com/frontsunriver/kenan_admin.git
 ```
 ```
-cd dashui-free-nextjs-admin-template
+cd kenan_admin
 ```
 
 ##  🚀 Getting Started 
@@ -21,10 +18,18 @@ cd dashui-free-nextjs-admin-template
 1. Install all packages
 
 ```
-npm i
+npm install -g yarn
+```
+```
+yarn install
 ```
 
-2. Run Development Server
+2. Check configuration
+First you need to check the configuration [/config/constant.js] and confirm the [product_mode] variable.
+
+If product mode is 0 it's development mode and if product mode is 1 it's production mode.
+
+3. Run your project
 
 ```
 npm run dev
@@ -32,25 +37,59 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
-3. Build your project
+4. Build your project
 
 ```
 npm run build
 ```
 
-## Dash UI Next.js Free / Pro Version
+## Kenan Admin server deploy mode [Linux(Ubuntu)]
 
-| Free Version        | Dash UI Pro
-|---------------------|-------------------------------------------- |
-| 1 Dashboard      | Coming Soon...                                |
-| Profile      | -                                           |
-| Settings | -                                     |
-| Billing |
-| Pricing |
-| 404 Error |
-| Authentication |
-| [Demo](https://dashui-free-nextjs-admin-template.vercel.app/) |
+1. Install NVM
+
+```
+sudo su
+```
+
+```
+apt-get install curl
+```
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+```
+
+```
+source ~/.bashrc
+```
+
+2. Install Node.js
+
+```
+nvm install 20.18.0
+```
+
+```
+nvm use 20.18.0
+```
+
+3. Download project and install packages [product_mode=1].
+
+```
+git clone https://github.com/frontsunriver/kenan_admin.git
+```
+
+```
+cd kenan_admin
+```
+
+```
+npm install -g yarn
+```
+
+```
+yarn install
+```
 
 ## Technical Support or Questions
-If you have questions or need help integrating the product please [contact us](https://codescandy.com/contact-us/).
-
+If you have questions or need help integrating the product please [contact me](https://t.me/sunriver0217).
