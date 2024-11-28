@@ -76,7 +76,6 @@ const ExpandComponent = ({ data, id }) => {
                 {item.name}
               </label>
             </div>
-            <div>{item.url}</div>
           </div>
         </div>
       </div>
