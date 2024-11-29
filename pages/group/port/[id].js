@@ -39,7 +39,7 @@ const UserManagementPage = () => {
         return row.is_https == 1 ? (
           <Badge
             pill
-            bg="success"
+            bg="green-secondary"
             className="me-1 p-2"
             style={{ fontSize: "12px" }}
           >
@@ -143,7 +143,7 @@ const UserManagementPage = () => {
           <Tab.Container defaultActiveKey="design">
             <Card>
               <Card.Body className="d-flex justify-content-end gap-2">
-                <Button variant="primary" onClick={handleUpdate}>
+                <Button variant="green-secondary" onClick={handleUpdate}>
                   Update
                 </Button>
                 <Button variant="danger" onClick={() => router.back()}>

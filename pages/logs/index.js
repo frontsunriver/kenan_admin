@@ -27,7 +27,7 @@ const AdminManagementPage = () => {
         ) : row.user_type == 1 ? (
           <Badge
             pill
-            bg="success"
+            bg="green-secondary"
             className="me-1 p-2"
             style={{ fontSize: "12px" }}
           >

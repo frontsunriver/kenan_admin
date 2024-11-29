@@ -80,7 +80,7 @@ const ExpireSessionPage = () => {
                       xs={8}
                       className="mt-4 d-flex justify-content-end gap-2"
                     >
-                      <Button variant="primary" onClick={handleCreate}>
+                      <Button variant="green-secondary" onClick={handleCreate}>
                         Update
                       </Button>
                     </Col>

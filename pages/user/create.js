@@ -154,7 +154,7 @@ const UserCreatePage = () => {
                       xs={8}
                       className="mt-4 d-flex justify-content-end gap-2"
                     >
-                      <Button variant="primary" onClick={handleCreate}>
+                      <Button variant="green-secondary" onClick={handleCreate}>
                         Create
                       </Button>
                       <Button variant="danger" onClick={() => router.back()}>

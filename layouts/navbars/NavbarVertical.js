@@ -210,9 +210,19 @@ const NavbarVertical = (props) => {
 
   return (
     <Fragment>
-      <SimpleBar style={{ maxHeight: "100vh", background: '#f1f5f9' }}>
+      <SimpleBar
+        style={{
+          maxHeight: "100vh",
+          background: "#f1f5f9",
+          padding: "0px 20px",
+        }}
+      >
         <div className="nav-scroller">
-          <Link href="/" className="navbar-brand">
+          <Link
+            href="/"
+            className="navbar-brand"
+            style={{ padding: "0.5rem 1rem 1rem" }}
+          >
             <Image src="/images/logo.png" alt="" />
           </Link>
         </div>
@@ -420,6 +430,7 @@ const NavbarVertical = (props) => {
                       className={`nav-link ${
                         location.pathname === menu.link ? "active" : ""
                       }`}
+                      style={{ paddingLeft: "0.5rem" }}
                     >
                       {typeof menu.icon === "string" ? (
                         <i className={`nav-icon fe fe-${menu.icon} me-2`}></i>

@@ -63,12 +63,15 @@
         }
 
         &.active {
-          color: $green-secondary;
-
+          // color: $green-secondary;
+          // border-bottom: 1px dashed $green-secondary;
+          background: $green-secondary;
+          border-radius: 5px;
+          color: #fff;
         }
 
         &.active .nav-icon {
-          color: $green-secondary;
+          color: #fff;
           opacity: 1;
         }
       }

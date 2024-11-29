@@ -148,7 +148,7 @@ const UserDetailPage = () => {
                       xs={8}
                       className="mt-4 d-flex justify-content-end "
                     >
-                      <Button variant="primary" onClick={handleUpdate}>
+                      <Button variant="green-secondary" onClick={handleUpdate}>
                         Update
                       </Button>
                     </Col>

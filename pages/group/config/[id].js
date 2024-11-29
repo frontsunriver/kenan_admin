@@ -124,7 +124,7 @@ const UserManagementPage = () => {
           <Tab.Container defaultActiveKey="design">
             <Card>
               <Card.Body className="d-flex justify-content-end gap-2">
-                <Button variant="primary" onClick={handleUpdate}>
+                <Button variant="green-secondary" onClick={handleUpdate}>
                   Update
                 </Button>
                 <Button variant="danger" onClick={() => router.back()}>

@@ -52,7 +52,7 @@ const GroupManagementPage = () => {
         return row.is_valid == 1 ? (
           <Badge
             pill
-            bg="success"
+            bg="green-secondary"
             className="me-1 p-2"
             style={{ fontSize: "12px" }}
           >
@@ -303,7 +303,7 @@ const GroupManagementPage = () => {
                   />
                 </div>
                 {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
-                  <Button variant="primary" onClick={handleCreate}>
+                  <Button variant="green-secondary" onClick={handleCreate}>
                     <i className="fe fe-plus me-2"></i> Create
                   </Button>
                 ) : (

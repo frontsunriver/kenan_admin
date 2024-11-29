@@ -203,7 +203,7 @@ const UserMachineManagementPage = () => {
                   />
                 </div>
                 {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
-                  <Button variant="primary" onClick={handleCreate}>
+                  <Button variant="green-secondary" onClick={handleCreate}>
                     <i className="fe fe-plus me-2"></i> Create
                   </Button>
                 ) : (

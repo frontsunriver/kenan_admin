@@ -42,8 +42,8 @@ $dark-warning: #c28135 !default; // NEW
 $dark-info: #51a0c2 !default; // NEW
 
 // new Color
-$green-primary: #022a02 !default;
-$green-secondary: #269126 !default;
+$green-primary: #333399 !default;
+$green-secondary: #3e4684 !default;
 
 $theme-colors: () !default;
 $theme-colors: (
@@ -69,6 +69,8 @@ $theme-colors: (
     "dark-danger": $dark-danger,
     "dark-success": $dark-success,
     "dark-secondary": $dark-secondary,
+    "green-primary": $green-primary,
+    "green-secondary": $green-secondary,
 );
 
 // Body
