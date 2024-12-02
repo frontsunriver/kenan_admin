@@ -15,16 +15,15 @@ const UserManagementPage = () => {
   const { userInfo } = useAuth();
   const router = useRouter();
 
-  const getUserInfo = () => {
-    axios
-      .post(`${SERVER_URL}/admin/findById`, { id: userInfo.id })
-      .then((res) => {
-        if (res.data.success) {
-          setLoginCount(res.data.data);
-        } else {
-          console.log("error");
-        }
-      });
+  const getLoginCount = () => {
+    axios.post(`${SERVER_URL}/logs/getLoginCount`).then((res) => {
+      if (res.data.success) {
+        console.log(res.data.data.length);
+        setLoginCount(res.data.data.length);
+      } else {
+        console.log("error");
+      }
+    });
   };
 
   const getMachine = () => {
@@ -61,10 +60,8 @@ const UserManagementPage = () => {
     getUser();
     getMachine();
     getVmImage();
-    if (userInfo != null) {
-      getUserInfo();
-    }
-  }, [userInfo]);
+    getLoginCount();
+  }, []);
 
   return (
     <Container fluid className="p-6">
@@ -180,9 +177,7 @@ const UserManagementPage = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {loginCount.length > 0 && loginCount[0]
-                    ? loginCount[0].login_count
-                    : 0}
+                  {loginCount}
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   Login Count

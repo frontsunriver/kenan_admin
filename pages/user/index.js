@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DateRangePicker from "react-bootstrap-daterangepicker";
 import { Col, Row, Card, Tab, Container, Button, Badge } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import axios from "axios";
@@ -9,6 +10,7 @@ import CustomSelect from "components/CustomSelect";
 import SearchBox from "components/Search";
 import { formatTimestamp, checkUrlExists } from "utils/utility";
 import { useAuth } from "provider/AuthContext";
+import "bootstrap-daterangepicker/daterangepicker.css";
 
 const UserManagementPage = () => {
   const { userInfo } = useAuth();
@@ -16,6 +18,10 @@ const UserManagementPage = () => {
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [loginStart, setLoginStart] = useState("");
+  const [loginEnd, setLoginEnd] = useState("");
+  const [createdStart, setCreatedStart] = useState("");
+  const [createdEnd, setCreatedEnd] = useState("");
   const router = useRouter();
   const validOption = [
     { label: "All", value: "" },
@@ -190,32 +196,43 @@ const UserManagementPage = () => {
       style: {
         paddingTop: "5px",
         paddingBottom: "5px",
-        backgroundColor: '#fff',
-        '&:nth-of-type(even)': {
-          backgroundColor: '#f5f5f5',
+        backgroundColor: "#fff",
+        "&:nth-of-type(even)": {
+          backgroundColor: "#f5f5f5",
         },
-        '&:nth-of-type(odd)': {
-          backgroundColor: '#fff',
+        "&:nth-of-type(odd)": {
+          backgroundColor: "#fff",
         },
       },
     },
     headRow: {
       style: {
         backgroundColor: "#646889",
-        color: '#fff'
+        color: "#fff",
       },
     },
   };
 
   useEffect(() => {
-    getData(keyword, flag);
+    getData(keyword, flag, loginStart, loginEnd, createdStart, createdEnd);
   }, []);
 
-  const getData = (searchKeyword, valid) => {
+  const getData = (
+    searchKeyword,
+    valid,
+    loginStart,
+    loginEnd,
+    createdStart,
+    createdEnd
+  ) => {
     axios
       .post(`${SERVER_URL}/user/getAll`, {
         keyword: searchKeyword,
         flag: valid,
+        loginStart: loginStart,
+        loginEnd: loginEnd,
+        createdStart: createdStart,
+        createdEnd: createdEnd,
       })
       .then((res) => {
         if (res.data.success) {
@@ -243,7 +260,7 @@ const UserManagementPage = () => {
   const handleDelete = (id) => {
     axios.post(`${SERVER_URL}/user/remove`, { id: id }).then((res) => {
       if (res.data.success) {
-        getData(keyword, flag);
+        getData(keyword, flag, loginStart, loginEnd, createdStart, createdEnd);
         showToast("Success", "User has been deleted successfully!", "success");
       } else {
         showToast("Error", "Something went wrong!", "failure");
@@ -264,12 +281,64 @@ const UserManagementPage = () => {
   };
 
   const handleSearch = () => {
-    getData(keyword, flag);
+    getData(keyword, flag, loginStart, loginEnd, createdStart, createdEnd);
   };
 
   const handleValidOption = (e) => {
     setFlag(e.value);
-    getData(keyword, e.value);
+    getData(keyword, e.value, loginStart, loginEnd, createdStart, createdEnd);
+  };
+
+  const handleLastLoginedAt = (event, picker) => {
+    console.log(picker.startDate, picker.endDate);
+    picker.element.val(
+      picker.startDate.format("MM/DD/YYYY") +
+        " - " +
+        picker.endDate.format("MM/DD/YYYY")
+    );
+    setLoginStart(picker.startDate.format("YYYY-MM-DD"));
+    setLoginEnd(picker.endDate.format("YYYY-MM-DD"));
+    getData(
+      keyword,
+      flag,
+      picker.startDate.format("YYYY-MM-DD"),
+      picker.endDate.format("YYYY-MM-DD"),
+      createdStart,
+      createdEnd
+    );
+  };
+
+  const handleLastLoginedAtCancel = (event, picker) => {
+    picker.element.val("");
+    setLoginStart("");
+    setLoginEnd("");
+    getData(keyword, flag, "", "", createdStart, createdEnd);
+  };
+
+  const handleCreatedAt = (event, picker) => {
+    console.log(picker.startDate, picker.endDate);
+    picker.element.val(
+      picker.startDate.format("MM/DD/YYYY") +
+        " - " +
+        picker.endDate.format("MM/DD/YYYY")
+    );
+    setCreatedStart(picker.startDate.format("YYYY-MM-DD"));
+    setCreatedEnd(picker.endDate.format("YYYY-MM-DD"));
+    getData(
+      keyword,
+      flag,
+      loginStart,
+      loginEnd,
+      picker.startDate.format("YYYY-MM-DD"),
+      picker.endDate.format("YYYY-MM-DD")
+    );
+  };
+
+  const handleCreatedAtCancel = (event, picker) => {
+    picker.element.val("");
+    setCreatedStart("");
+    setCreatedEnd("");
+    getData(keyword, flag, loginStart, loginEnd, "", "");
   };
 
   return (
@@ -306,6 +375,35 @@ const UserManagementPage = () => {
                     className="border rounded"
                     // defaultValue={defaultSelected}
                   />
+                  <DateRangePicker
+                    initialSettings={{
+                      autoUpdateInput: false,
+                      locale: { cancelLabel: "Clear" },
+                    }}
+                    onApply={handleLastLoginedAt}
+                    onCancel={handleLastLoginedAtCancel}
+                  >
+                    <input
+                      type="text"
+                      className="border search-input rounded"
+                      placeholder="Last Login At"
+                    />
+                  </DateRangePicker>
+
+                  <DateRangePicker
+                    initialSettings={{
+                      autoUpdateInput: false,
+                      locale: { cancelLabel: "Clear" },
+                    }}
+                    onApply={handleCreatedAt}
+                    onCancel={handleCreatedAtCancel}
+                  >
+                    <input
+                      type="text"
+                      className="border search-input rounded"
+                      placeholder="Created At"
+                    />
+                  </DateRangePicker>
                 </div>
                 {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
                   <Button variant="green-secondary" onClick={handleCreate}>
