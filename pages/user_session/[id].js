@@ -96,6 +96,19 @@ const UserSessionLogDetail = () => {
       style: {
         paddingTop: "5px",
         paddingBottom: "5px",
+        backgroundColor: "#fff",
+        "&:nth-of-type(even)": {
+          backgroundColor: "#f5f5f5",
+        },
+        "&:nth-of-type(odd)": {
+          backgroundColor: "#fff",
+        },
+      },
+    },
+    headRow: {
+      style: {
+        backgroundColor: "#646889",
+        color: "#fff",
       },
     },
   };

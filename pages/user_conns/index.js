@@ -6,7 +6,11 @@ import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
 import { useAuth } from "provider/AuthContext";
-import { formatTimestamp, checkUrlExists } from "utils/utility";
+import {
+  formatTimestamp,
+  checkUrlExists,
+  transferDataSpeed,
+} from "utils/utility";
 import SearchBox from "components/Search";
 import CustomSelect from "components/CustomSelect";
 
@@ -63,23 +67,56 @@ const UserConnectionManagement = () => {
     //   grow: 1,
     // },
     {
+      name: "Port Name",
+      selector: (row) => row.title,
+      grow: 1,
+      sortable: true,
+    },
+    {
       name: "Listen Port",
       selector: (row) => row.listen_port,
       grow: 1,
       sortable: true,
     },
     {
+      name: "Target",
+      selector: (row) => row.target,
+      grow: 1,
+      sortable: true,
+    },
+    {
+      name: "Target Port",
+      selector: (row) => row.target_port,
+      grow: 1,
+      sortable: true,
+    },
+    {
       name: "Status",
       selector: (row) => {
+        const targetValue =
+          row.traffic_bytes / row.time_difference_seconds == 0
+            ? 1
+            : row.time_difference_seconds;
         return row.connection_status == 1 ? (
-          <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#6cff00",
-            }}
-          ></div>
+          targetValue > 100 ? (
+            <div
+              style={{
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                background: "#6cff00",
+              }}
+            ></div>
+          ) : (
+            <div
+              style={{
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                background: "#e38a2c",
+              }}
+            ></div>
+          )
         ) : (
           <div
             style={{
@@ -90,6 +127,18 @@ const UserConnectionManagement = () => {
             }}
           ></div>
         );
+      },
+      grow: 1,
+    },
+    {
+      name: "Speed",
+      selector: (row) => {
+        const targetValue = transferDataSpeed(
+          row.traffic_bytes / row.time_difference_seconds == 0
+            ? 1
+            : row.time_difference_seconds
+        );
+        return <div>{row.connection_status == 1 ? targetValue : `0 B/s`}</div>;
       },
       grow: 1,
     },
@@ -108,6 +157,19 @@ const UserConnectionManagement = () => {
       style: {
         paddingTop: "5px",
         paddingBottom: "5px",
+        backgroundColor: "#fff",
+        "&:nth-of-type(even)": {
+          backgroundColor: "#f5f5f5",
+        },
+        "&:nth-of-type(odd)": {
+          backgroundColor: "#fff",
+        },
+      },
+    },
+    headRow: {
+      style: {
+        backgroundColor: "#646889",
+        color: "#fff",
       },
     },
   };
@@ -119,7 +181,7 @@ const UserConnectionManagement = () => {
       getData(keyword, flag);
     }, 10000);
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
 
   const getData = (searchKeyword, valid) => {
@@ -203,6 +265,52 @@ const UserConnectionManagement = () => {
                 ) : (
                   <></>
                 )} */}
+                <div
+                  style={{
+                    background: "#3e4684",
+                    color: "#fff",
+                    padding: "0.8rem",
+                    borderRadius: "5px",
+                    width: "200px",
+                  }}
+                >
+                  <div className="d-flex align-items-center">
+                    {" "}
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background: "#6cff00",
+                      }}
+                    ></div>{" "}
+                    <span>&nbsp; Connected</span>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    {" "}
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background: "#e38a2c",
+                      }}
+                    ></div>{" "}
+                    <span>&nbsp; Unstable</span>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    {" "}
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background: "#e2e2e2",
+                      }}
+                    ></div>{" "}
+                    <span>&nbsp; Disconnected</span>
+                  </div>
+                </div>
               </Card.Body>
               <Card.Body className="p-3">
                 <DataTable

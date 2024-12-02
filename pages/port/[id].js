@@ -18,8 +18,10 @@ const PortDetailPage = () => {
   const [targetPort, setTargetPort] = useState("");
   const [targetIp, setTargetIp] = useState("");
   const [type, setType] = useState("");
+  const [visible, setVisible] = useState(0);
   const [defaultOptionValue, setDefaultOptionValue] = useState(null);
   const [defaultHttpsOptionValue, setDefaultHttpsOptionValue] = useState(null);
+  const [defaultVisibleValue, setDefaultVisibleValue] = useState(null);
   const router = useRouter();
   const { id } = router.query;
 
@@ -31,6 +33,11 @@ const PortDetailPage = () => {
   const httpsOption = [
     { value: 1, label: "Yes" },
     { value: 0, label: "No" },
+  ];
+
+  const visibleOption = [
+    { value: 1, label: "Visible" },
+    { value: 0, label: "Invisible" },
   ];
 
   useEffect(() => {
@@ -47,8 +54,12 @@ const PortDetailPage = () => {
           setDefaultHttpsOptionValue(
             getHttpsOptionByValue(res.data.data.data[0].is_https)
           );
-          setType(res.data.data.data[0].is_valid);
+          setDefaultVisibleValue(
+            getVisibleOptionByValue(res.data.data.data[0].visible)
+          );
+          setType(res.data.data.data[0].is_active);
           setHttps(res.data.data.data[0].is_https);
+          setVisible(res.data.data.data[0].visible);
         } else {
           // toast.error(res.data.message);
         }
@@ -62,6 +73,10 @@ const PortDetailPage = () => {
 
   const getHttpsOptionByValue = (value) => {
     return httpsOption.find((option) => option.value === value) || null;
+  };
+
+  const getVisibleOptionByValue = (value) => {
+    return visibleOption.find((option) => option.value === value) || null;
   };
 
   const handleUpdate = async () => {
@@ -91,6 +106,7 @@ const PortDetailPage = () => {
         target_port: targetPort,
         is_https: https,
         is_active: type,
+        visible: visible,
       })
       .then((res) => {
         if (res.data.success) {
@@ -108,6 +124,10 @@ const PortDetailPage = () => {
 
   const handleChangeHttpsOption = (e) => {
     setHttps(e.value);
+  };
+
+  const handleVisibleChange = (e) => {
+    setVisible(e.value);
   };
 
   return (
@@ -204,6 +224,21 @@ const PortDetailPage = () => {
                         className="border rounded"
                         defaultValue={defaultOptionValue}
                         value={type}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      Visible
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <CustomSelect
+                        options={visibleOption}
+                        placeHolder="Select visible option"
+                        onChange={handleVisibleChange}
+                        className="border rounded"
+                        defaultValue={defaultVisibleValue}
+                        value={visible}
                       />
                     </Col>
                   </Row>

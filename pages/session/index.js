@@ -8,19 +8,20 @@ import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import CustomInput from "components/CustomInput";
-import CustomSelect from "components/CustomSelect";
 import { useToast } from "provider/ToastContext";
 
 const ExpireSessionPage = () => {
   const { showToast } = useToast();
   const router = useRouter();
   const [sessionTime, setSessionTime] = useState("");
+  const [agentTimeout, setAgentTimeout] = useState("");
 
   useEffect(() => {
     axios.post(`${SERVER_URL}/session/get`).then((res) => {
       if (res.data.success) {
         if (res.data.data.length > 0) {
           setSessionTime(res.data.data[0].session_expircy_time);
+          setAgentTimeout(res.data.data[0].agent_timeout);
         }
       } else {
         console.log("error");
@@ -37,6 +38,7 @@ const ExpireSessionPage = () => {
     await axios
       .post(`${SERVER_URL}/session/update`, {
         session_expircy_time: sessionTime,
+        agent_timeout : agentTimeout
       })
       .then((res) => {
         if (res.data.success) {
@@ -71,6 +73,24 @@ const ExpireSessionPage = () => {
                         required
                         onChange={(e) => setSessionTime(e.target.value)}
                         value={sessionTime}
+                      />
+                    </div>
+                  </Row>
+                  <Row className="mb-3">
+                    <label
+                      htmlFor="machine"
+                      className="col-sm-4 col-form-label
+                    form-label"
+                    >
+                      Agent Timeout(seconds)
+                    </label>
+                    <div className="col-sm-4 mb-3 mb-lg-0">
+                      <CustomInput
+                        type="text"
+                        placeholder="Agent Timeout"
+                        required
+                        onChange={(e) => setAgentTimeout(e.target.value)}
+                        value={agentTimeout}
                       />
                     </div>
                   </Row>

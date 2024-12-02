@@ -20,6 +20,7 @@ const PortCreatePage = () => {
   const [targetIp, setTargetIp] = useState("");
   const [targetPort, setTargetPort] = useState("");
   const [type, setType] = useState("");
+  const [visible, setVisible] = useState("");
 
   const validOption = [
     { value: "1", label: "Enabled" },
@@ -29,6 +30,11 @@ const PortCreatePage = () => {
   const httpsOption = [
     { value: "1", label: "Yes" },
     { value: "0", label: "No" },
+  ];
+
+  const visibleOption = [
+    { value: "1", label: "Visible" },
+    { value: "0", label: "Invisible" },
   ];
 
   const handleCreate = async () => {
@@ -56,6 +62,11 @@ const PortCreatePage = () => {
       showToast("Error", "Please select status!", "failure");
       return;
     }
+    if (visible == "") {
+      showToast("Error", "Please select visible!", "failure");
+      return;
+    }
+
 
     await axios
       .post(`${SERVER_URL}/port/create`, {
@@ -65,6 +76,7 @@ const PortCreatePage = () => {
         target_ip: targetIp,
         is_https: https,
         is_active: type,
+        visible: visible
       })
       .then((res) => {
         if (res.data.success) {
@@ -85,6 +97,10 @@ const PortCreatePage = () => {
 
   const handleChangeHttpsOption = (e) => {
     setHttps(e.value);
+  };
+
+  const handleChangeVisibleOption = (e) => {
+    setVisible(e.value);
   };
 
   return (
@@ -174,6 +190,19 @@ const PortCreatePage = () => {
                         options={validOption}
                         placeHolder="Select status option"
                         onChange={handleChange}
+                        className="border rounded"
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Form.Label className="col-sm-4" htmlFor="type">
+                      Visible
+                    </Form.Label>
+                    <Col md={4} xs={4}>
+                      <CustomSelect
+                        options={visibleOption}
+                        placeHolder="Select visible option"
+                        onChange={handleChangeVisibleOption}
                         className="border rounded"
                       />
                     </Col>

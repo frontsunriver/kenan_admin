@@ -99,6 +99,31 @@ const PortManagementPage = () => {
       grow: 1,
     },
     {
+      name: "Visible",
+      selector: (row) => {
+        return row.visible == 1 ? (
+          <Badge
+            pill
+            bg="success"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
+            Visible
+          </Badge>
+        ) : (
+          <Badge
+            pill
+            bg="danger"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
+            Invisible
+          </Badge>
+        );
+      },
+      grow: 1,
+    },
+    {
       name: "Action",
       selector: (row) => {
         return (
@@ -163,6 +188,19 @@ const PortManagementPage = () => {
       style: {
         paddingTop: "5px",
         paddingBottom: "5px",
+        backgroundColor: '#fff',
+        '&:nth-of-type(even)': {
+          backgroundColor: '#f5f5f5',
+        },
+        '&:nth-of-type(odd)': {
+          backgroundColor: '#fff',
+        },
+      },
+    },
+    headRow: {
+      style: {
+        backgroundColor: "#646889",
+        color: '#fff'
       },
     },
   };
