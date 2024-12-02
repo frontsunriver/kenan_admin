@@ -6,11 +6,7 @@ import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
 import { useAuth } from "provider/AuthContext";
-import {
-  formatTimestamp,
-  checkUrlExists,
-  transferDataSpeed,
-} from "utils/utility";
+import { formatTimestamp, transferDataSpeed } from "utils/utility";
 import SearchBox from "components/Search";
 import CustomSelect from "components/CustomSelect";
 
@@ -21,10 +17,15 @@ const UserConnectionManagement = () => {
   const [data, setData] = useState([]);
   const [flag, setFlag] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [searchPortName, setSearchPortName] = useState("");
+  const [searchListenPort, setSearchListenPort] = useState("");
+  const [searchTarget, setSearchTarget] = useState("");
+  const [searchTargetPort, setSearchTargetPort] = useState("");
 
   const validOption = [
     { label: "All", value: "" },
-    { label: "Enabled", value: "1" },
+    { label: "Connected", value: "1" },
+    { label: "Unstable", value: "2" },
     { label: "Disabled", value: "0" },
   ];
 
@@ -41,31 +42,6 @@ const UserConnectionManagement = () => {
       sortable: true,
       grow: 1,
     },
-    // {
-    //   name: "Status",
-    //   selector: (row) => {
-    //     return row.status == 1 ? (
-    //       <div
-    //         style={{
-    //           width: "10px",
-    //           height: "10px",
-    //           borderRadius: "50%",
-    //           background: "#6cff00",
-    //         }}
-    //       ></div>
-    //     ) : (
-    //       <div
-    //         style={{
-    //           width: "10px",
-    //           height: "10px",
-    //           borderRadius: "50%",
-    //           background: "#e2e2e2",
-    //         }}
-    //       ></div>
-    //     );
-    //   },
-    //   grow: 1,
-    // },
     {
       name: "Port Name",
       selector: (row) => row.title,
@@ -93,30 +69,24 @@ const UserConnectionManagement = () => {
     {
       name: "Status",
       selector: (row) => {
-        const targetValue =
-          row.traffic_bytes / row.time_difference_seconds == 0
-            ? 1
-            : row.time_difference_seconds;
-        return row.connection_status == 1 ? (
-          targetValue > 100 ? (
-            <div
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "#6cff00",
-              }}
-            ></div>
-          ) : (
-            <div
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                background: "#e38a2c",
-              }}
-            ></div>
-          )
+        return row.status_value == 1 ? (
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              background: "#6cff00",
+            }}
+          ></div>
+        ) : row.status_value == 2 ? (
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              background: "#e38a2c",
+            }}
+          ></div>
         ) : (
           <div
             style={{
@@ -133,11 +103,7 @@ const UserConnectionManagement = () => {
     {
       name: "Speed",
       selector: (row) => {
-        const targetValue = transferDataSpeed(
-          row.traffic_bytes / row.time_difference_seconds == 0
-            ? 1
-            : row.time_difference_seconds
-        );
+        const targetValue = transferDataSpeed(row.speed);
         return <div>{row.connection_status == 1 ? targetValue : `0 B/s`}</div>;
       },
       grow: 1,
@@ -175,19 +141,44 @@ const UserConnectionManagement = () => {
   };
 
   useEffect(() => {
-    getData(keyword, flag);
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
 
     const interval = setInterval(() => {
-      getData(keyword, flag);
+      getData(
+        keyword,
+        searchPortName,
+        searchListenPort,
+        searchTarget,
+        searchTargetPort,
+        flag
+      );
     }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const getData = (searchKeyword, valid) => {
+  const getData = (
+    searchKeyword,
+    portName,
+    listenPort,
+    target,
+    targetPort,
+    valid
+  ) => {
     axios
       .post(`${SERVER_URL}/userConnection/getAll`, {
         keyword: searchKeyword,
+        portName: portName,
+        listenPort: listenPort,
+        target: target,
+        targetPort: targetPort,
         flag: valid,
       })
       .then((res) => {
@@ -199,32 +190,72 @@ const UserConnectionManagement = () => {
       });
   };
 
-  const handleDelete = (id) => {
-    axios.post(`${SERVER_URL}/usermachine/remove`, { id: id }).then((res) => {
-      if (res.data.success) {
-        getData(keyword, flag);
-        showToast("Success", "Item has been deleted successfully.", "success");
-      } else {
-        showToast("Error", "Something went wrong!", "failure");
-      }
-    });
-  };
-
-  const handleCreate = () => {
-    router.push("/machine/create");
-  };
-
-  const handleGoDetail = (id) => {
-    router.push(`/machine/${id}`);
-  };
-
   const handleSearch = () => {
-    getData(keyword, flag);
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
+  };
+
+  const handleSearchPortName = () => {
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
+  };
+
+  const handleSearchListenPort = () => {
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
+  };
+
+  const handleSearchTarget = () => {
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
+  };
+
+  const handleSearchTargetPort = () => {
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      flag
+    );
   };
 
   const handleValidOption = (e) => {
+    console.log(e.value);
     setFlag(e.value);
-    getData(keyword, e.value);
+    getData(
+      keyword,
+      searchPortName,
+      searchListenPort,
+      searchTarget,
+      searchTargetPort,
+      e.value
+    );
   };
 
   return (
@@ -248,15 +279,40 @@ const UserConnectionManagement = () => {
                   <SearchBox
                     onChange={setKeyword}
                     onSearch={handleSearch}
-                    placeholder="Search..."
+                    placeholder="User Email, machine id"
+                    width={200}
                   />
-                  {/* <CustomSelect
+                  <SearchBox
+                    onChange={setSearchPortName}
+                    onSearch={handleSearchPortName}
+                    placeholder="Port Name..."
+                    width={200}
+                  />
+                  <SearchBox
+                    onChange={setSearchListenPort}
+                    onSearch={handleSearchListenPort}
+                    placeholder="Listen Port..."
+                    width={200}
+                  />
+                  <SearchBox
+                    onChange={setSearchTarget}
+                    onSearch={handleSearchTarget}
+                    placeholder="Target..."
+                    width={200}
+                  />
+                  <SearchBox
+                    onChange={setSearchTargetPort}
+                    onSearch={handleSearchTargetPort}
+                    placeholder="Target Port..."
+                    width={200}
+                  />
+                  <CustomSelect
                     options={validOption}
                     placeHolder="Select valid option"
                     onChange={handleValidOption}
                     className="border rounded"
                     // defaultValue={defaultSelected}
-                  /> */}
+                  />
                 </div>
                 {/* {checkUrlExists(userInfo, `${router.pathname}/create`) ? (
                   <Button variant="green-secondary" onClick={handleCreate}>
