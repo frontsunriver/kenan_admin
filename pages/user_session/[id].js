@@ -17,7 +17,7 @@ const UserSessionLogDetail = () => {
 
   const columns = [
     {
-      name: "Object Type",
+      name: "User Type",
       selector: (row) => {
         return row.user_type == 0 ? (
           <Badge
@@ -31,7 +31,7 @@ const UserSessionLogDetail = () => {
         ) : row.user_type == 1 ? (
           <Badge
             pill
-            bg="success"
+            bg="green-secondary"
             className="me-1 p-2"
             style={{ fontSize: "12px" }}
           >
@@ -48,18 +48,11 @@ const UserSessionLogDetail = () => {
           </Badge>
         );
       },
-      sortable: true,
       grow: 1,
-    },
-    {
-      name: "User Id",
-      selector: (row) => row.user_id,
-      grow: 1,
-      sortable: true,
     },
     {
       name: "User Email",
-      selector: (row) => row.user_email,
+      selector: (row) => row.email,
       grow: 1,
       sortable: true,
     },
@@ -72,13 +65,13 @@ const UserSessionLogDetail = () => {
     {
       name: "Action",
       selector: (row) => row.action,
-      grow: 1,
+      grow: 2,
       sortable: true,
     },
     {
       name: "Details",
       selector: (row) => row.details,
-      grow: 4,
+      grow: 3,
       sortable: true,
     },
     {
