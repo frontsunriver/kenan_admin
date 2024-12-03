@@ -34,6 +34,7 @@ const MachineCreatePage = () => {
   }, []);
 
   const validOption = [
+    { value: "2", label: "Pending Approved" },
     { value: "1", label: "Enabled" },
     { value: "0", label: "Disabled" },
   ];

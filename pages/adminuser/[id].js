@@ -94,6 +94,36 @@ const AdminUserDetailPage = () => {
     );
   };
 
+  const handleSelectAll = async (e) => {
+    e.preventDefault();
+    await axios
+      .post(`${SERVER_URL}/adminRole/selectAll`, {
+        id: id,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          showToast("Success", "User has full access on this system.", "success");
+        } else {
+          showToast("Error", "Something went wrong", "failure");
+        }
+      });
+  };
+
+  const handleDeselectAll = async (e) => {
+    e.preventDefault();
+    await axios
+      .post(`${SERVER_URL}/adminRole/deselectAll`, {
+        id: id,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          showToast("Success", "User Role has been deleted all.", "success");
+        } else {
+          showToast("Error", "Something went wrong", "failure");
+        }
+      });
+  };
+
   return (
     <Container fluid className="p-6">
       {/* Page Heading */}
@@ -136,6 +166,26 @@ const AdminUserDetailPage = () => {
                         defaultValue={defaultValue}
                         value={type}
                       />
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
+                    <Col
+                      md={4}
+                      xs={4}
+                      className="d-flex justify-content-between gap-3"
+                    >
+                      <button
+                        className="form-control btn btn-success"
+                        onClick={handleSelectAll}
+                      >
+                        Select All
+                      </button>
+                      <button
+                        className="form-control btn btn-danger"
+                        onClick={handleDeselectAll}
+                      >
+                        Deselect All
+                      </button>
                     </Col>
                   </Row>
                   <Row>

@@ -20,6 +20,7 @@ const UserMachineManagementPage = () => {
 
   const validOption = [
     { label: "All", value: "" },
+    { label: "Pending Approved", value: "2" },
     { label: "Enabled", value: "1" },
     { label: "Disabled", value: "0" },
   ];
@@ -79,7 +80,16 @@ const UserMachineManagementPage = () => {
     {
       name: "Valid",
       selector: (row) => {
-        return row.is_valid == 1 ? (
+        return row.is_valid == 2 ? (
+          <Badge
+            pill
+            bg="info"
+            className="me-1 p-2"
+            style={{ fontSize: "12px" }}
+          >
+            Pending Approved
+          </Badge>
+        ) : row.is_valid == 1 ? (
           <Badge
             pill
             bg="green-secondary"
@@ -166,19 +176,19 @@ const UserMachineManagementPage = () => {
       style: {
         paddingTop: "5px",
         paddingBottom: "5px",
-        backgroundColor: '#fff',
-        '&:nth-of-type(even)': {
-          backgroundColor: '#f5f5f5',
+        backgroundColor: "#fff",
+        "&:nth-of-type(even)": {
+          backgroundColor: "#f5f5f5",
         },
-        '&:nth-of-type(odd)': {
-          backgroundColor: '#fff',
+        "&:nth-of-type(odd)": {
+          backgroundColor: "#fff",
         },
       },
     },
     headRow: {
       style: {
         backgroundColor: "#646889",
-        color: '#fff'
+        color: "#fff",
       },
     },
   };
