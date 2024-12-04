@@ -483,3 +483,37 @@
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
+.p-component {
+  font-size: 15px;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
+  background: #f4f5ff;
+  color: $green-secondary;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight .p-tree-toggler, .p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight .p-treenode-icon {
+  color: $green-secondary;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+  margin-right: 5px;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler:enabled:hover {
+  color: #374151;
+  border-color: transparent;
+  background: #8181b5;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box {
+  border-color: $green-primary;
+  background: $green-secondary;
+}
+
+.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+  border-color: $green-primary;
+}

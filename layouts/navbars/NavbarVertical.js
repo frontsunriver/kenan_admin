@@ -128,6 +128,7 @@ const NavbarVertical = (props) => {
     if (userData != "''" && userData != null) {
       const userInfo = JSON.parse(userData);
       const roleArray = userInfo["roles"];
+      console.log('roleArray------------------------', roleArray);
       const roleUrls = new Set(roleArray.map((role) => role.url));
       const menuArray = MenuArray.filter((item) => roleUrls.has(item.link));
       const combineArray = [...HomeArray, ...menuArray];
