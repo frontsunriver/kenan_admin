@@ -53,3 +53,16 @@ export const checkUrlExists = (userInfo, url) => {
 export const hashPassword = (password) => {
   return crypto.createHash("sha256").update(password).digest("hex");
 };
+
+export const generateSessionId = (length) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
+};
