@@ -8,12 +8,21 @@ export const formatFileSize = (bytes) => {
 };
 
 export const transferDataSpeed = (bytes) => {
-  if (bytes == null) return "0 B/s";
-  if (bytes === 0) return "0 B/s";
+  console.log("bytes", bytes);
+  
+  // Handle null or 0 values
+  if (bytes == null || bytes === 0) return "0 B/s";
+  
+  // Handle very small values
+  if (bytes < 1) {
+    return bytes.toFixed(4) + " B/s"; // Display in bytes with 4 decimal places
+  }
+
   const sizes = ["B/s", "KB/s", "MB/s", "GB/s", "TB/s"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
 };
+
 
 export const formatTimestamp = (timestamp) => {
   if (!timestamp && timestamp == undefined && timestamp == "") {
