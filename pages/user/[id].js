@@ -64,7 +64,6 @@ const UserDetailPage = () => {
   };
 
   const handleChange = (e) => {
-    console.log(e);
     setType(e.value);
   };
 

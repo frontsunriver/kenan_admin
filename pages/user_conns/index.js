@@ -246,7 +246,6 @@ const UserConnectionManagement = () => {
   };
 
   const handleValidOption = (e) => {
-    console.log(e.value);
     setFlag(e.value);
     getData(
       keyword,

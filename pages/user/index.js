@@ -290,7 +290,6 @@ const UserManagementPage = () => {
   };
 
   const handleLastLoginedAt = (event, picker) => {
-    console.log(picker.startDate, picker.endDate);
     picker.element.val(
       picker.startDate.format("MM/DD/YYYY") +
         " - " +
@@ -316,7 +315,6 @@ const UserManagementPage = () => {
   };
 
   const handleCreatedAt = (event, picker) => {
-    console.log(picker.startDate, picker.endDate);
     picker.element.val(
       picker.startDate.format("MM/DD/YYYY") +
         " - " +

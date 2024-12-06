@@ -28,27 +28,33 @@ const UserMachineManagementPage = () => {
     {
       name: "User Email",
       selector: (row) => row.email,
-      grow: 1,
+      grow: 2,
       sortable: true,
     },
     {
       name: "Machine ID",
       selector: (row) => row.machine_id,
       sortable: true,
-      grow: 1,
+      grow: 2,
+    },
+    {
+      name: "Session ID",
+      selector: (row) => row.session_id,
+      grow: 5,
+      sortable: true,
     },
     {
       name: "IP",
       selector: (row) => row.ip,
       sortable: true,
-      grow: 1,
+      grow: 2,
     },
     {
       name: "Created At",
       selector: (row) => {
         return formatTimestamp(row.created_at);
       },
-      grow: 1,
+      grow: 2,
       sortable: true,
     },
     {
@@ -56,7 +62,7 @@ const UserMachineManagementPage = () => {
       selector: (row) => {
         return formatTimestamp(row.updated_at);
       },
-      grow: 1,
+      grow: 2,
       sortable: true,
     },
     {

@@ -41,8 +41,16 @@ export const AuthProvider = ({ children }) => {
       userData = cookie.split("=")[1];
     }
     if (userData != "''" && userData != null) {
+      const userInfo = JSON.parse(userData);
       setLoggedIn(true);
-      setUserInfo(JSON.parse(userData));
+      setUserInfo(userInfo);
+      const roleArray = userInfo["roles"];
+
+      if (!roleArray.find((item) => item.url == router.pathname)) {
+        if (!router.pathname == "/dashboard") {
+          router.push("/");
+        }
+      }
     } else {
       setLoggedIn(false);
       setUserInfo(null);
@@ -56,6 +64,12 @@ export const AuthProvider = ({ children }) => {
       // }
     }
   }, [router.pathname]);
+
+  const isDynamicRoute = (path) => {
+    const dynamicPattern = /^\/(stream|category|event|detail)\/\d+$/; // Matches /stream/, /category/, or /event/ followed by any number
+    const dynamicWithIdPattern = /^\/(stream|category|event|detail)\/\[\w+\]$/;
+    return dynamicPattern.test(path) || dynamicWithIdPattern.test(path);
+  };
 
   const login = (user) => {
     setLoggedIn(true);

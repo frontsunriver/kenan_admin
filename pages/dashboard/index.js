@@ -4,8 +4,10 @@ import axios from "axios";
 import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useAuth } from "provider/AuthContext";
+import { useToast } from "provider/ToastContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Cpu, DoorOpen, PeopleFill, PersonWorkspace, Stack } from "react-bootstrap-icons";
 
 const UserManagementPage = () => {
   const [user, setUser] = useState([]);
@@ -13,12 +15,28 @@ const UserManagementPage = () => {
   const [vmImages, setVmImages] = useState([]);
   const [loginCount, setLoginCount] = useState([]);
   const { userInfo } = useAuth();
+  const { showToast } = useToast();
+  const [roleArray, setRoleArray] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    let userData = null;
+    const cookie = cookies.find((row) =>
+      row.startsWith("X-Local-Storage-Data=")
+    );
+    if (cookie && cookie != "") {
+      userData = cookie.split("=")[1];
+    }
+    if (userData != "''" && userData != null) {
+      const userInfo = JSON.parse(userData);
+      setRoleArray(userInfo["roles"]);
+    }
+  }, []);
 
   const getLoginCount = () => {
     axios.post(`${SERVER_URL}/logs/getLoginCount`).then((res) => {
       if (res.data.success) {
-        console.log(res.data.data.length);
         setLoginCount(res.data.data.length);
       } else {
         console.log("error");
@@ -84,16 +102,22 @@ const UserManagementPage = () => {
               gap: "20px",
             }}
           >
-            <Card style={{ background: "#0070ff", height: "200px" }}>
+            <Card style={{ background: "#0070ff" }}>
               <Card.Body>
                 <Card.Title
                   style={{
                     color: "#fff",
                     fontSize: "40px",
                     fontWeight: "bold",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {user.length}
+                  <div>{user.length}</div>
+                  <div style={{ color: "#e3e3e3" }}>
+                    <PeopleFill size={96} />
+                  </div>
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   Users
@@ -106,22 +130,38 @@ const UserManagementPage = () => {
                     color: "#fff",
                     cursor: "pointer",
                   }}
-                  onClick={() => router.push("/user")}
+                  onClick={() => {
+                    if (roleArray.find((item) => item.url === "/user")) {
+                      router.push("/user");
+                    } else {
+                      showToast(
+                        "Error",
+                        "You do not have permission",
+                        "failure"
+                      );
+                    }
+                  }}
                 >
                   More Info
                 </div>
               </Card.Footer>
             </Card>
-            <Card style={{ background: "#00e600", height: "200px" }}>
+            <Card style={{ background: "#3e4684" }}>
               <Card.Body>
                 <Card.Title
                   style={{
                     color: "#fff",
                     fontSize: "40px",
                     fontWeight: "bold",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {machine.length}
+                  <div>{machine.length}</div>
+                  <div style={{ color: "#e3e3e3" }}>
+                    <Cpu size={96} />
+                  </div>
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   User Machines
@@ -134,22 +174,38 @@ const UserManagementPage = () => {
                     color: "#fff",
                     cursor: "pointer",
                   }}
-                  onClick={() => router.push("/machine")}
+                  onClick={() => {
+                    if (roleArray.find((item) => item.url === "/machine")) {
+                      router.push("/machine");
+                    } else {
+                      showToast(
+                        "Error",
+                        "You do not have permission",
+                        "failure"
+                      );
+                    }
+                  }}
                 >
                   More Info
                 </div>
               </Card.Footer>
             </Card>
-            <Card style={{ background: "#cc6600", height: "200px" }}>
+            <Card style={{ background: "#cc6600" }}>
               <Card.Body>
                 <Card.Title
                   style={{
                     color: "#fff",
                     fontSize: "40px",
                     fontWeight: "bold",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {vmImages.length}
+                  <div>{vmImages.length}</div>
+                  <div style={{ color: "#e3e3e3" }}>
+                    <Stack size={96} />
+                  </div>
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   VM Images
@@ -162,22 +218,38 @@ const UserManagementPage = () => {
                     color: "#fff",
                     cursor: "pointer",
                   }}
-                  onClick={() => router.push("/vm_images")}
+                  onClick={() => {
+                    if (roleArray.find((item) => item.url === "/vm_images")) {
+                      router.push("/vm_images");
+                    } else {
+                      showToast(
+                        "Error",
+                        "You do not have permission",
+                        "failure"
+                      );
+                    }
+                  }}
                 >
                   More Info
                 </div>
               </Card.Footer>
             </Card>
-            <Card style={{ background: "#e60000", height: "200px" }}>
+            <Card style={{ background: "#e60000" }}>
               <Card.Body>
                 <Card.Title
                   style={{
                     color: "#fff",
                     fontSize: "40px",
                     fontWeight: "bold",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {loginCount}
+                  <div>{loginCount}</div>
+                  <div style={{ color: "#e3e3e3" }}>
+                    <DoorOpen size={96} />
+                  </div>
                 </Card.Title>
                 <Card.Text style={{ color: "#fff", fontSize: "25px" }}>
                   Login Count
@@ -190,7 +262,17 @@ const UserManagementPage = () => {
                     color: "#fff",
                     cursor: "pointer",
                   }}
-                  onClick={() => router.push("/adminuser")}
+                  onClick={() => {
+                    if (roleArray.find((item) => item.url === "/logs")) {
+                      router.push("/logs");
+                    } else {
+                      showToast(
+                        "Error",
+                        "You do not have permission",
+                        "failure"
+                      );
+                    }
+                  }}
                 >
                   More Info
                 </div>

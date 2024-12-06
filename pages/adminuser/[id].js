@@ -96,7 +96,6 @@ const AdminUserDetailPage = () => {
             .post(`${SERVER_URL}/adminRole/findByUserId`, { user_id: id })
             .then((res) => {
               if (res.data.success) {
-                console.log(res.data.data);
                 // setData(res.data.data);
                 const updatedObject = {};
 
@@ -107,7 +106,6 @@ const AdminUserDetailPage = () => {
                   };
                 });
 
-                console.log(updatedObject);
                 setSelectedKeys(updatedObject);
               }
             });
