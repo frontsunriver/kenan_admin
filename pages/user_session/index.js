@@ -6,7 +6,7 @@ import { SERVER_URL } from "config/constant";
 import { useRouter } from "next/router";
 import { useToast } from "provider/ToastContext";
 import { useAuth } from "provider/AuthContext";
-import { formatTimestamp, checkUrlExists } from "utils/utility";
+import { formatTimestamp, checkUrlExists, transferDataSpeed } from "utils/utility";
 import SearchBox from "components/Search";
 import CustomSelect from "components/CustomSelect";
 
@@ -87,6 +87,14 @@ const UserMachineManagementPage = () => {
             }}
           ></div>
         );
+      },
+      grow: 1,
+    },
+    {
+      name: "Speed",
+      selector: (row) => {
+        const targetValue = transferDataSpeed(row.speed);
+        return <div>{targetValue}</div>;
       },
       grow: 1,
     },
