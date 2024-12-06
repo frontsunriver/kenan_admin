@@ -8,6 +8,7 @@ export const formatFileSize = (bytes) => {
 };
 
 export const transferDataSpeed = (bytes) => {
+  if (bytes == null) return "0 B/s";
   if (bytes === 0) return "0 B/s";
   const sizes = ["B/s", "KB/s", "MB/s", "GB/s", "TB/s"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
